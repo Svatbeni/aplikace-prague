@@ -11,6 +11,8 @@ import { RootStackParamList, MainTabsParamList } from '../types';
 import { HomeScreen } from '../features/home/screens/HomeScreen';
 import { PlacesListScreen } from '../features/places/screens/PlacesListScreen';
 import { PlaceDetailScreen } from '../features/places/screens/PlaceDetailScreen';
+import { ToursListScreen } from '../features/tours/screens/ToursListScreen';
+import { TourDetailScreen } from '../features/tours/screens/TourDetailScreen';
 import { MapScreen } from '../features/map/screens/MapScreen';
 import { ItinerariesListScreen } from '../features/itineraries/screens/ItinerariesListScreen';
 import { MoreScreen } from '../features/more/screens/MoreScreen';
@@ -56,6 +58,17 @@ const MainTabsNavigator = () => {
           ),
           headerShown: true,
           headerTitle: 'Places to Visit',
+        }}
+      />
+      <Tab.Screen
+        name="Tours"
+        component={ToursListScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="ticket" size={size} color={color} />
+          ),
+          headerShown: true,
+          headerTitle: 'Tours',
         }}
       />
       <Tab.Screen
@@ -105,6 +118,14 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="PlaceDetail"
           component={PlaceDetailScreen}
+          options={{
+            headerShown: false,
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen
+          name="TourDetail"
+          component={TourDetailScreen}
           options={{
             headerShown: false,
             presentation: 'card',

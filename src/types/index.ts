@@ -58,6 +58,7 @@ export enum WeatherCondition {
 export enum FavoriteType {
   PLACE = 'place',
   ITINERARY = 'itinerary',
+  TOUR = 'tour',
 }
 
 export interface OpeningHours {
@@ -208,11 +209,13 @@ export type RootStackParamList = {
   MainTabs: undefined;
   PlaceDetail: { placeId: string };
   ItineraryDetail: { itineraryId: string };
+  TourDetail: { tourId: string };
 };
 
 export type MainTabsParamList = {
   Home: undefined;
   Places: undefined;
+  Tours: undefined;
   Map: undefined;
   Itineraries: undefined;
   More: undefined;
