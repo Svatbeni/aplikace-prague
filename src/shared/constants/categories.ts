@@ -13,14 +13,14 @@ export const categoryLabels: Record<PlaceCategory, string> = {
 };
 
 export const categoryIcons: Record<PlaceCategory, string> = {
-  [PlaceCategory.SIGHTSEEING]: 'camera',
-  [PlaceCategory.HIDDEN_GEMS]: 'star',
+  [PlaceCategory.SIGHTSEEING]: 'star',
+  [PlaceCategory.HIDDEN_GEMS]: 'eye',
   [PlaceCategory.BIZARRE]: 'help-circle',
-  [PlaceCategory.VIEWPOINTS]: 'eye',
+  [PlaceCategory.VIEWPOINTS]: 'camera',
   [PlaceCategory.PARKS]: 'leaf',
-  [PlaceCategory.CULTURE]: 'book',
+  [PlaceCategory.CULTURE]: 'storefront',
   [PlaceCategory.FOOD]: 'restaurant',
-  [PlaceCategory.NIGHTLIFE]: 'musical-notes',
+  [PlaceCategory.NIGHTLIFE]: 'wine',
   [PlaceCategory.KIDS]: 'happy',
 };
 

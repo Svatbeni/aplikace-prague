@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Prague Places</name>
+    <description>Places to visit in Prague</description>
+    
+    <Placemark>
+      <name>Pražský hrad</name>
+      <description>Největší hradní komplex na světě, sídlo českých králů a prezidentů.</description>
+      <Point>
+        <coordinates>14.4004,50.0904,0</coordinates>
+      </Point>
+      <ExtendedData>
+        <Data name="address">
+          <value>Pražský hrad, 119 08 Praha 1</value>
+        </Data>
+        <Data name="category">
+          <value>sightseeing</value>
+        </Data>
+        <Data name="shortDescription">
+          <value>Největší hradní komplex na světě</value>
+        </Data>
+        <Data name="practicalTips">
+          <value>Jděte brzy ráno, abyste se vyhnuli davům. Kupte si lístky online.</value>
+        </Data>
+        <Data name="estimatedVisitDuration">
+          <value>180</value>
+        </Data>
+        <Data name="priceRange">
+          <value>medium</value>
+        </Data>
+        <Data name="isPremium">
+          <value>false</value>
+        </Data>
+      </ExtendedData>
+    </Placemark>
+    
+    <Placemark>
+      <name>Karlův most</name>
+      <description>Historický kamenný most přes Vltavu, postavený ve 14. století.</description>
+      <Point>
+        <coordinates>14.4110,50.0865,0</coordinates>
+      </Point>
+      <ExtendedData>
+        <Data name="address">
+          <value>Karlův most, 110 00 Praha 1</value>
+        </Data>
+        <Data name="category">
+          <value>sightseeing</value>
+        </Data>
+        <Data name="shortDescription">
+          <value>Historický kamenný most přes Vltavu</value>
+        </Data>
+        <Data name="practicalTips">
+          <value>Nejlepší čas na návštěvu je brzy ráno nebo pozdě večer, kdy je méně turistů.</value>
+        </Data>
+        <Data name="estimatedVisitDuration">
+          <value>30</value>
+        </Data>
+        <Data name="priceRange">
+          <value>free</value>
+        </Data>
+        <Data name="isPremium">
+          <value>false</value>
+        </Data>
+      </ExtendedData>
+    </Placemark>
+    
+    <Placemark>
+      <name>Lennonova zeď</name>
+      <description>Barevná zeď s graffiti a mírovými poselstvími inspirovanými Johnem Lennonem.</description>
+      <Point>
+        <coordinates>14.4075,50.0857,0</coordinates>
+      </Point>
+      <ExtendedData>
+        <Data name="address">
+          <value>Velkopřevorské náměstí, 100 00 Praha 1</value>
+        </Data>
+        <Data name="category">
+          <value>hidden_gems</value>
+        </Data>
+        <Data name="shortDescription">
+          <value>Barevná zeď s graffiti a mírovými poselstvími</value>
+        </Data>
+        <Data name="practicalTips">
+          <value>Vždy se mění s novými graffiti. Zdarma k návštěvě. Nejlépe fotografovat v přirozeném světle.</value>
+        </Data>
+        <Data name="estimatedVisitDuration">
+          <value>15</value>
+        </Data>
+        <Data name="priceRange">
+          <value>free</value>
+        </Data>
+        <Data name="isPremium">
+          <value>false</value>
+        </Data>
+      </ExtendedData>
+    </Placemark>
+    
+  </Document>
+</kml>

@@ -15,11 +15,15 @@ export const lightColors = {
   success: '#388E3C',
   warning: '#F57C00',
   info: '#0288D1',
-  sightseeing: '#2196F3',
-  hiddenGems: '#9C27B0',
-  food: '#FF9800',
-  nature: '#4CAF50',
-  viewpoints: '#F44336',
+  sightseeing: '#F44336', // red
+  hiddenGems: '#1565C0', // darker blue
+  bizarre: '#9C27B0', // purple
+  food: '#FFC107', // yellow
+  parks: '#2E7D32', // darker green
+  culture: '#795548', // brown
+  viewpoints: '#64B5F6', // lighter blue
+  nightlife: '#FF9800', // orange
+  kids: '#E91E63', // pink
   favorite: '#E91E63',
   premium: '#FFD700',
 };
@@ -39,11 +43,15 @@ export const darkColors = {
   success: '#66BB6A',
   warning: '#FFA726',
   info: '#42A5F5',
-  sightseeing: '#42A5F5',
-  hiddenGems: '#BA68C8',
-  food: '#FFB74D',
-  nature: '#81C784',
-  viewpoints: '#EF5350',
+  sightseeing: '#EF5350', // red
+  hiddenGems: '#1976D2', // darker blue
+  bizarre: '#BA68C8', // purple
+  food: '#FFD54F', // yellow
+  parks: '#66BB6A', // darker green
+  culture: '#A1887F', // brown
+  viewpoints: '#81D4FA', // lighter blue
+  nightlife: '#FFB74D', // orange
+  kids: '#F48FB1', // pink
   favorite: '#F48FB1',
   premium: '#FFD54F',
 };
@@ -55,12 +63,20 @@ export const getCategoryColor = (category: string, isDark: boolean): string => {
       return colors.sightseeing;
     case 'hidden_gems':
       return colors.hiddenGems;
-    case 'food':
-      return colors.food;
-    case 'nature':
-      return colors.nature;
+    case 'bizarre':
+      return colors.bizarre;
     case 'viewpoints':
       return colors.viewpoints;
+    case 'parks':
+      return colors.parks;
+    case 'culture':
+      return colors.culture;
+    case 'food':
+      return colors.food;
+    case 'nightlife':
+      return colors.nightlife;
+    case 'kids':
+      return colors.kids;
     default:
       return colors.primary;
   }

@@ -139,7 +139,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   const [tracksViewChanges, setTracksViewChanges] = useState(true);
   const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const [filterHeight, setFilterHeight] = useState(60); // Default height
+  const [filterHeight, setFilterHeight] = useState(50); // Default height
   const tracksTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mapRef = useRef<MapView>(null);
 
@@ -389,7 +389,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
             >
               <Ionicons
                 name={iconName}
-                size={14}
+                size={12}
                 color={isSelected ? '#FFFFFF' : categoryColor}
                 style={styles.filterIcon}
               />
@@ -445,9 +445,9 @@ const styles = StyleSheet.create({
     right: 16,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    padding: 8,
+    padding: 6,
     borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -457,14 +457,14 @@ const styles = StyleSheet.create({
     maxWidth: Dimensions.get('window').width - 32,
   },
   filterButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 6,
+    gap: 4,
     minHeight: 36,
   },
   filterIcon: {
