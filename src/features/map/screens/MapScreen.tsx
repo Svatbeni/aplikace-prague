@@ -15,6 +15,7 @@ import { getCategoryColor } from '../../../shared/theme/colors';
 import { categoryIcons, categoryLabels } from '../../../shared/constants/categories';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface MapScreenProps {
   navigation: any;
@@ -114,6 +115,7 @@ PlaceCallout.displayName = 'PlaceCallout';
 
 export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [places, setPlaces] = useState<Place[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<PlaceCategory | null>(
     null
@@ -126,7 +128,9 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   const [tracksViewChanges, setTracksViewChanges] = useState(true);
   const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [filterHeight, setFilterHeight] = useState(60); // Default height
   const tracksTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
     loadPlaces();
@@ -194,6 +198,23 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
     }
   };
 
+  const handleMyLocationPress = async () => {
+    if (!userLocation) {
+      // Try to get location again if we don't have it
+      await requestLocationPermission();
+      return;
+    }
+
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      }, 500);
+    }
+  };
+
   const filteredPlaces = useMemo(() => {
     if (!places || places.length === 0) {
       return [];
@@ -235,11 +256,12 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <MapView
+        ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={region}
         showsUserLocation={!!userLocation}
-        showsMyLocationButton={true}
+        showsMyLocationButton={false}
         removeClippedSubviews={false}
         maxZoomLevel={18}
         onMapReady={handleMapReady}
@@ -289,7 +311,13 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
       )}
 
       {/* Category Filter Overlay */}
-      <View style={styles.filterContainer}>
+      <View
+        style={[styles.filterContainer, { top: insets.top + 5 }]}
+        onLayout={(event) => {
+          const { height } = event.nativeEvent.layout;
+          setFilterHeight(height);
+        }}
+      >
         <TouchableOpacity
           style={[
             styles.filterButton,
@@ -319,37 +347,68 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
             All
           </Text>
         </TouchableOpacity>
-        {(Object.values(PlaceCategory) as PlaceCategory[]).map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={[
-              styles.filterButton,
-              {
-                backgroundColor:
-                  selectedCategory === category
-                    ? theme.colors.primary
-                    : theme.colors.surface,
-                borderColor: theme.colors.border,
-              },
-            ]}
-            onPress={() => {
-              // Explicitly set the new category (don't toggle if already selected)
-              const newCategory = selectedCategory === category ? null : category;
-              setSelectedCategory(newCategory);
-            }}
-          >
-            <Ionicons
-              name="ellipse"
-              size={12}
-              color={
-                selectedCategory === category
-                  ? '#FFFFFF'
-                  : getCategoryColor(category, theme.isDark)
-              }
-            />
-          </TouchableOpacity>
-        ))}
+        {(Object.values(PlaceCategory) as PlaceCategory[]).map((category) => {
+          const iconName = categoryIcons[category] as keyof typeof Ionicons.glyphMap;
+          const isSelected = selectedCategory === category;
+          const categoryColor = getCategoryColor(category, theme.isDark);
+          
+          return (
+            <TouchableOpacity
+              key={category}
+              style={[
+                styles.filterButton,
+                {
+                  backgroundColor:
+                    isSelected
+                      ? theme.colors.primary
+                      : theme.colors.surface,
+                  borderColor: theme.colors.border,
+                },
+              ]}
+              onPress={() => {
+                // Explicitly set the new category (don't toggle if already selected)
+                const newCategory = isSelected ? null : category;
+                setSelectedCategory(newCategory);
+              }}
+            >
+              <Ionicons
+                name={iconName}
+                size={14}
+                color={isSelected ? '#FFFFFF' : categoryColor}
+                style={styles.filterIcon}
+              />
+              <Text
+                style={[
+                  styles.filterButtonText,
+                  {
+                    color: isSelected ? '#FFFFFF' : theme.colors.text,
+                  },
+                ]}
+              >
+                {categoryLabels[category]}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
+
+      {/* My Location Button */}
+      <TouchableOpacity
+        style={[
+          styles.myLocationButton,
+          {
+            top: insets.top + filterHeight + 21, // 5 (filter top) + filterHeight + 8 (gap)
+          },
+        ]}
+        onPress={handleMyLocationPress}
+        disabled={!userLocation}
+      >
+        <Ionicons
+          name="locate"
+          size={20}
+          color={userLocation ? theme.colors.primary : theme.colors.textTertiary}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -367,11 +426,11 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     position: 'absolute',
-    top: 16,
     right: 16,
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     padding: 8,
     borderRadius: 8,
     shadowColor: '#000',
@@ -379,6 +438,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    maxWidth: Dimensions.get('window').width - 32,
   },
   filterButton: {
     paddingHorizontal: 12,
@@ -387,7 +447,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 40,
+    flexDirection: 'row',
+    gap: 6,
+    minHeight: 36,
+  },
+  filterIcon: {
+    marginRight: 0,
   },
   filterButtonText: {
     fontSize: 12,
@@ -502,6 +567,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     zIndex: 1002,
+  },
+  myLocationButton: {
+    position: 'absolute',
+    right: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
 
