@@ -2007,21 +2007,36 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
 export const seedDatabase = async (): Promise<void> => {
   const repo = new PlaceRepository();
 
-  // Always update all places to ensure they have local images
+  // Check if database is already seeded
   const existing = await repo.getAll();
   const now = new Date();
   
   if (existing.length > 0) {
-    // Update ALL existing places with local images
+    // Only update places that need updating (e.g., missing local images)
+    // Check if any place needs updating by comparing images
+    const placesToUpdate: Array<{ existing: Place; sample: typeof samplePlaces[0] }> = [];
+    
     for (const existingPlace of existing) {
       const samplePlace = samplePlaces.find(p => p.id === existingPlace.id);
       if (samplePlace) {
-        await repo.update({
-          ...samplePlace,
-          createdAt: existingPlace.createdAt,
-          updatedAt: now,
-        });
+        // Only update if images are different (e.g., if existing has URL instead of local file)
+        const existingImages = existingPlace.images;
+        const sampleImages = samplePlace.images;
+        const needsUpdate = JSON.stringify(existingImages) !== JSON.stringify(sampleImages);
+        
+        if (needsUpdate) {
+          placesToUpdate.push({ existing: existingPlace, sample: samplePlace });
+        }
       }
+    }
+    
+    // Batch update only places that need it
+    for (const { existing: existingPlace, sample: samplePlace } of placesToUpdate) {
+      await repo.update({
+        ...samplePlace,
+        createdAt: existingPlace.createdAt,
+        updatedAt: now,
+      });
     }
     
     // Insert any missing places
@@ -2198,19 +2213,7 @@ export const seedTours = async (): Promise<void> => {
   const now = new Date();
 
   if (existing.length > 0) {
-    // Update existing tours
-    for (const existingTour of existing) {
-      const sampleTour = sampleTours.find((t) => t.id === existingTour.id);
-      if (sampleTour) {
-        await repo.update({
-          ...sampleTour,
-          createdAt: existingTour.createdAt,
-          updatedAt: now,
-        });
-      }
-    }
-
-    // Insert any missing tours
+    // Only insert missing tours, skip updates if data already exists
     for (const sampleTour of sampleTours) {
       const exists = existing.find((t) => t.id === sampleTour.id);
       if (!exists) {
@@ -2363,19 +2366,7 @@ export const seedHotels = async (): Promise<void> => {
   const now = new Date();
 
   if (existing.length > 0) {
-    // Update existing hotels
-    for (const existingHotel of existing) {
-      const sampleHotel = sampleHotels.find((h) => h.id === existingHotel.id);
-      if (sampleHotel) {
-        await repo.update({
-          ...sampleHotel,
-          createdAt: existingHotel.createdAt || now,
-          updatedAt: now,
-        } as Hotel & { createdAt: Date; updatedAt: Date });
-      }
-    }
-
-    // Insert any missing hotels
+    // Only insert missing hotels, skip updates if data already exists
     for (const sampleHotel of sampleHotels) {
       const exists = existing.find((h) => h.id === sampleHotel.id);
       if (!exists) {
@@ -2661,18 +2652,7 @@ export const seedTips = async (): Promise<void> => {
   const now = new Date();
 
   if (existing.length > 0) {
-    // Update existing tips
-    for (const existingTip of existing) {
-      const sampleTip = sampleTips.find((t) => t.id === existingTip.id);
-      if (sampleTip) {
-        await repo.update({
-          ...sampleTip,
-          updatedAt: now,
-        });
-      }
-    }
-
-    // Insert any missing tips
+    // Only insert missing tips, skip updates if data already exists
     for (const sampleTip of sampleTips) {
       const exists = existing.find((t) => t.id === sampleTip.id);
       if (!exists) {
@@ -2766,19 +2746,7 @@ export const seedItineraries = async (): Promise<void> => {
   const now = new Date();
 
   if (existing.length > 0) {
-    // Update existing itineraries
-    for (const existingItinerary of existing) {
-      const sampleItinerary = sampleItineraries.find((i) => i.id === existingItinerary.id);
-      if (sampleItinerary) {
-        await repo.update({
-          ...sampleItinerary,
-          createdAt: existingItinerary.createdAt,
-          updatedAt: now,
-        });
-      }
-    }
-
-    // Insert any missing itineraries
+    // Only insert missing itineraries, skip updates if data already exists
     for (const sampleItinerary of sampleItineraries) {
       const exists = existing.find((i) => i.id === sampleItinerary.id);
       if (!exists) {
