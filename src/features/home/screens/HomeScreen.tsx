@@ -27,12 +27,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     navigation.navigate('Places');
   };
 
+  const handleMapPress = () => {
+    navigation.navigate('Map');
+  };
+
+  const handleToursPress = () => {
+    navigation.navigate('Tours');
+  };
+
   const handleItinerariesPress = () => {
     navigation.navigate('Itineraries');
   };
 
-  const handleToursPress = () => {
-    navigation.navigate('More');
+  const handleHotelsPress = () => {
+    navigation.navigate('Hotels');
+  };
+
+  const handlePracticalTipsPress = () => {
+    navigation.navigate('PracticalTips');
+  };
+
+  const handleWeatherPress = () => {
+    navigation.navigate('Weather');
   };
 
   // Placeholder images - in production, these would be actual image assets
@@ -40,16 +56,32 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     uri: 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&h=400&fit=crop',
   };
 
-  const cityWalksImage = {
-    uri: 'https://images.unsplash.com/photo-1555993536-7e0c0a0a0b0b?w=800&h=400&fit=crop',
+  const thingsToSeeImage = {
+    uri: 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&h=400&fit=crop',
   };
 
-  const whatToSeeImage = {
-    uri: 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&h=400&fit=crop',
+  const mapImage = {
+    uri: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=400&fit=crop',
   };
 
   const toursImage = {
     uri: 'https://images.unsplash.com/photo-1555993536-7e0c0a0a0b0b?w=800&h=400&fit=crop',
+  };
+
+  const itinerariesImage = {
+    uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop',
+  };
+
+  const hotelsImage = {
+    uri: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=400&fit=crop',
+  };
+
+  const practicalTipsImage = {
+    uri: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=400&fit=crop',
+  };
+
+  const weatherImage = {
+    uri: 'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=800&h=400&fit=crop',
   };
 
   return (
@@ -84,7 +116,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   <Ionicons name="menu" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <View style={styles.headerTextContainer}>
-                  <Text style={styles.headerTitle}>Prague</Text>
+                  <Text style={styles.headerTitle}>Discovering Prague</Text>
+                  <Text style={styles.headerSubtitle}>Only Guide by Locals</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -94,19 +127,39 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         {/* Feature Cards Section */}
         <View style={styles.cardsContainer}>
           <FeatureCard
-            title="City walks"
-            image={cityWalksImage}
-            onPress={handleItinerariesPress}
-          />
-          <FeatureCard
-            title="What to see"
-            image={whatToSeeImage}
+            title="Things to See"
+            image={thingsToSeeImage}
             onPress={handlePlacesPress}
           />
           <FeatureCard
-            title="Tours and"
+            title="Map"
+            image={mapImage}
+            onPress={handleMapPress}
+          />
+          <FeatureCard
+            title="Tours"
             image={toursImage}
             onPress={handleToursPress}
+          />
+          <FeatureCard
+            title="Itineraries"
+            image={itinerariesImage}
+            onPress={handleItinerariesPress}
+          />
+          <FeatureCard
+            title="Where to Stay"
+            image={hotelsImage}
+            onPress={handleHotelsPress}
+          />
+          <FeatureCard
+            title="Practical Tips"
+            image={practicalTipsImage}
+            onPress={handlePracticalTipsPress}
+          />
+          <FeatureCard
+            title="Weather"
+            image={weatherImage}
+            onPress={handleWeatherPress}
           />
         </View>
       </ScrollView>
@@ -154,15 +207,28 @@ const styles = StyleSheet.create({
   },
   headerTextContainer: {
     alignItems: 'center',
+    justifyContent: 'center',
     paddingBottom: spacing.xl,
   },
   headerTitle: {
     fontSize: 48,
     fontWeight: 'bold',
     color: '#FFFFFF',
+    textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
+  },
+  headerSubtitle: {
+    fontSize: 18,
+    fontWeight: '300',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginTop: spacing.sm,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+    letterSpacing: 1,
   },
   cardsContainer: {
     paddingHorizontal: spacing.md,
