@@ -117,8 +117,8 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const [places, setPlaces] = useState<Place[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<PlaceCategory | null>(
-    null
+  const [selectedCategories, setSelectedCategories] = useState<Set<PlaceCategory>>(
+    new Set()
   );
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
@@ -161,7 +161,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
         tracksTimeoutRef.current = null;
       }
     };
-  }, [selectedCategory]);
+  }, [selectedCategories]);
 
   // Disable tracksViewChanges after map is ready for better performance
   const handleMapReady = () => {
@@ -219,11 +219,11 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
     if (!places || places.length === 0) {
       return [];
     }
-    if (selectedCategory === null) {
+    if (selectedCategories.size === 0) {
       return places;
     }
-    return places.filter((p) => p.category === selectedCategory);
-  }, [places, selectedCategory]);
+    return places.filter((p) => selectedCategories.has(p.category));
+  }, [places, selectedCategories]);
 
   const region = userLocation
     ? {
@@ -323,14 +323,14 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
             styles.filterButton,
             {
               backgroundColor:
-                selectedCategory === null
+                selectedCategories.size === 0
                   ? theme.colors.primary
                   : theme.colors.surface,
               borderColor: theme.colors.border,
             },
           ]}
           onPress={() => {
-            setSelectedCategory(null);
+            setSelectedCategories(new Set());
           }}
         >
           <Text
@@ -338,7 +338,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
               styles.filterButtonText,
               {
                 color:
-                  selectedCategory === null
+                  selectedCategories.size === 0
                     ? '#FFFFFF'
                     : theme.colors.text,
               },
@@ -349,7 +349,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
         </TouchableOpacity>
         {(Object.values(PlaceCategory) as PlaceCategory[]).map((category) => {
           const iconName = categoryIcons[category] as keyof typeof Ionicons.glyphMap;
-          const isSelected = selectedCategory === category;
+          const isSelected = selectedCategories.has(category);
           const categoryColor = getCategoryColor(category, theme.isDark);
           
           return (
@@ -366,9 +366,14 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
                 },
               ]}
               onPress={() => {
-                // Explicitly set the new category (don't toggle if already selected)
-                const newCategory = isSelected ? null : category;
-                setSelectedCategory(newCategory);
+                // Toggle category in selected set
+                const newCategories = new Set(selectedCategories);
+                if (isSelected) {
+                  newCategories.delete(category);
+                } else {
+                  newCategories.add(category);
+                }
+                setSelectedCategories(newCategories);
               }}
             >
               <Ionicons
