@@ -211,6 +211,7 @@ export type RootStackParamList = {
 };
 
 export type MainTabsParamList = {
+  Home: undefined;
   Places: undefined;
   Map: undefined;
   Itineraries: undefined;

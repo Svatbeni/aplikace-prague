@@ -8,6 +8,7 @@ import { useTheme } from '../shared/theme';
 import { RootStackParamList, MainTabsParamList } from '../types';
 
 // Screens
+import { HomeScreen } from '../features/home/screens/HomeScreen';
 import { PlacesListScreen } from '../features/places/screens/PlacesListScreen';
 import { PlaceDetailScreen } from '../features/places/screens/PlaceDetailScreen';
 import { MapScreen } from '../features/map/screens/MapScreen';
@@ -36,6 +37,16 @@ const MainTabsNavigator = () => {
         },
       }}
     >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
+          headerShown: false,
+        }}
+      />
       <Tab.Screen
         name="Places"
         component={PlacesListScreen}
