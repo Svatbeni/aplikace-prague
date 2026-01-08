@@ -149,11 +149,6 @@ export const seedDatabase = async (): Promise<void> => {
   const now = new Date();
   
   if (existing.length > 0) {
-    console.log(`Found ${existing.length} existing places, updating with local images...`);
-    
-    let updatedCount = 0;
-    let insertedCount = 0;
-    
     // Update ALL existing places with local images
     for (const existingPlace of existing) {
       const samplePlace = samplePlaces.find(p => p.id === existingPlace.id);
@@ -163,8 +158,6 @@ export const seedDatabase = async (): Promise<void> => {
           createdAt: existingPlace.createdAt,
           updatedAt: now,
         });
-        updatedCount++;
-        console.log(`Updated place ${samplePlace.id} (${samplePlace.name}) with image: ${samplePlace.images[0]}`);
       }
     }
     
@@ -177,12 +170,8 @@ export const seedDatabase = async (): Promise<void> => {
           createdAt: now,
           updatedAt: now,
         });
-        insertedCount++;
-        console.log(`Inserted new place ${samplePlace.id} (${samplePlace.name}) with image: ${samplePlace.images[0]}`);
       }
     }
-    
-    console.log(`✓ Updated ${updatedCount} places, inserted ${insertedCount} new places with local images`);
   } else {
     // Insert sample places if database is empty
     for (const place of samplePlaces) {
@@ -192,7 +181,6 @@ export const seedDatabase = async (): Promise<void> => {
         updatedAt: now,
       });
     }
-    console.log(`Seeded ${samplePlaces.length} places`);
   }
 
   // Seed tours
@@ -338,11 +326,6 @@ export const seedTours = async (): Promise<void> => {
   const now = new Date();
 
   if (existing.length > 0) {
-    console.log(`Found ${existing.length} existing tours, updating...`);
-
-    let updatedCount = 0;
-    let insertedCount = 0;
-
     // Update existing tours
     for (const existingTour of existing) {
       const sampleTour = sampleTours.find((t) => t.id === existingTour.id);
@@ -352,8 +335,6 @@ export const seedTours = async (): Promise<void> => {
           createdAt: existingTour.createdAt,
           updatedAt: now,
         });
-        updatedCount++;
-        console.log(`Updated tour ${sampleTour.id} (${sampleTour.title})`);
       }
     }
 
@@ -366,12 +347,8 @@ export const seedTours = async (): Promise<void> => {
           createdAt: now,
           updatedAt: now,
         });
-        insertedCount++;
-        console.log(`Inserted new tour ${sampleTour.id} (${sampleTour.title})`);
       }
     }
-
-    console.log(`✓ Updated ${updatedCount} tours, inserted ${insertedCount} new tours`);
     return;
   }
 
@@ -383,7 +360,5 @@ export const seedTours = async (): Promise<void> => {
       updatedAt: now,
     });
   }
-
-  console.log(`Seeded ${sampleTours.length} tours`);
 };
 
