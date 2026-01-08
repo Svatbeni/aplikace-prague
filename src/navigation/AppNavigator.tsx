@@ -17,6 +17,7 @@ import { HotelsListScreen } from '../features/hotels/screens/HotelsListScreen';
 import { HotelDetailScreen } from '../features/hotels/screens/HotelDetailScreen';
 import { MapScreen } from '../features/map/screens/MapScreen';
 import { ItinerariesListScreen } from '../features/itineraries/screens/ItinerariesListScreen';
+import { ItineraryDetailScreen } from '../features/itineraries/screens/ItineraryDetailScreen';
 import { MoreScreen } from '../features/more/screens/MoreScreen';
 import { PracticalTipsScreen } from '../features/practical-tips/screens/PracticalTipsScreen';
 import { WeatherScreen } from '../features/weather/screens/WeatherScreen';
@@ -161,6 +162,14 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="HotelDetail"
           component={HotelDetailScreen}
+          options={{
+            headerShown: false,
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen
+          name="ItineraryDetail"
+          component={ItineraryDetailScreen}
           options={{
             headerShown: false,
             presentation: 'card',
