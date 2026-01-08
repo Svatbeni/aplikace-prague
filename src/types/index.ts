@@ -3,9 +3,13 @@
 export enum PlaceCategory {
   SIGHTSEEING = 'sightseeing',
   HIDDEN_GEMS = 'hidden_gems',
-  FOOD = 'food',
-  NATURE = 'nature',
+  BIZARRE = 'bizarre',
   VIEWPOINTS = 'viewpoints',
+  PARKS = 'parks',
+  CULTURE = 'culture',
+  FOOD = 'food',
+  NIGHTLIFE = 'nightlife',
+  KIDS = 'kids',
 }
 
 export enum ItineraryType {

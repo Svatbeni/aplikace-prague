@@ -144,9 +144,13 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
     null,
     PlaceCategory.SIGHTSEEING,
     PlaceCategory.HIDDEN_GEMS,
-    PlaceCategory.FOOD,
-    PlaceCategory.NATURE,
+    PlaceCategory.BIZARRE,
     PlaceCategory.VIEWPOINTS,
+    PlaceCategory.PARKS,
+    PlaceCategory.CULTURE,
+    PlaceCategory.FOOD,
+    PlaceCategory.NIGHTLIFE,
+    PlaceCategory.KIDS,
   ];
 
   const getFilterLabel = (filter: FilterType): string => {
@@ -236,7 +240,7 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
       {renderCategoryFilter()}
       <FlatList
         data={filteredPlaces}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
         renderItem={({ item }) => (
           <PlaceCard
             place={item}
