@@ -1,7 +1,8 @@
 import { PlaceRepository } from '../repositories/PlaceRepository';
 import { TourRepository } from '../repositories/TourRepository';
 import { HotelRepository } from '../repositories/HotelRepository';
-import { Place, PlaceCategory, Tour, Hotel } from '../../types';
+import { TipRepository } from '../repositories/TipRepository';
+import { Place, PlaceCategory, Tour, Hotel, PracticalTip, TipCategory } from '../../types';
 
 const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
   {
@@ -189,6 +190,9 @@ export const seedDatabase = async (): Promise<void> => {
 
   // Seed hotels
   await seedHotels();
+
+  // Seed practical tips
+  await seedTips();
 };
 
 const sampleTours: Omit<Tour, 'createdAt' | 'updatedAt'>[] = [
@@ -528,6 +532,301 @@ export const seedHotels = async (): Promise<void> => {
       createdAt: now,
       updatedAt: now,
     } as Hotel & { createdAt: Date; updatedAt: Date });
+  }
+};
+
+const sampleTips: Omit<PracticalTip, 'updatedAt'>[] = [
+  // TRANSPORT tips
+  {
+    id: 'tip-transport-1',
+    category: TipCategory.TRANSPORT,
+    title: 'Prague Public Transport System',
+    content: 'Prague has an excellent public transport system with metro, trams, and buses. The system is ranked among the best in the world. You can buy tickets at ticket machines, via the PID Lítačka mobile app, or at tobacco shops. Always validate your ticket when entering - you only need to validate once per journey, even when transferring between lines.',
+    icon: 'subway',
+    priority: 10,
+  },
+  {
+    id: 'tip-transport-2',
+    category: TipCategory.TRANSPORT,
+    title: 'Ticket Types and Prices',
+    content: 'Short-term tickets: 30 minutes (30 CZK), 90 minutes (40 CZK), 24 hours (120 CZK), 72 hours (330 CZK). For longer stays, consider a monthly pass. Children under 6 travel free, children 6-15 and seniors 65+ get discounted tickets. Always validate your ticket immediately after purchase - fines for traveling without a valid ticket are 1000 CZK.',
+    icon: 'ticket',
+    priority: 9,
+  },
+  {
+    id: 'tip-transport-3',
+    category: TipCategory.TRANSPORT,
+    title: 'From Airport to City Center',
+    content: 'The cheapest way: Take bus 100 or 119 to metro station, then metro to city center (total 40 CZK). Bus 100 goes to Zličín (metro B), bus 119 goes to Nádraží Veleslavín (metro A). Journey time: 30-45 minutes. Alternatively, Airport Express bus (100 CZK) goes directly to main train station. Taxi/Uber costs 400-600 CZK.',
+    icon: 'airplane',
+    priority: 10,
+  },
+  {
+    id: 'tip-transport-4',
+    category: TipCategory.TRANSPORT,
+    title: 'Using Metro in Prague',
+    content: 'Prague has 3 metro lines (A, B, C) with clear color coding. Metro runs from 5 AM to midnight (extended hours on weekends). Transfer stations are well-marked and transfers usually take just a few minutes. During rush hours (7-9 AM, 4-6 PM), metro can be very crowded. Avoid traveling with large luggage during peak times.',
+    icon: 'train',
+    priority: 8,
+  },
+  {
+    id: 'tip-transport-5',
+    category: TipCategory.TRANSPORT,
+    title: 'Trams - Scenic Way to Travel',
+    content: 'Trams are a great way to see the city while traveling. Popular routes include tram 22 (passes many major attractions) and tram 17. Trams run frequently, usually every 5-10 minutes during the day. Remember to press the stop button before your stop. Trams are accessible and safe, but watch your belongings during rush hours.',
+    icon: 'car',
+    priority: 7,
+  },
+  {
+    id: 'tip-transport-6',
+    category: TipCategory.TRANSPORT,
+    title: 'Finding Your Way',
+    content: 'Download the official PID Lítačka app for route planning, real-time schedules, and mobile tickets. Google Maps also works well for public transport in Prague. At metro stations and major tram stops, you\'ll find route maps and schedules. Most locals are happy to help if you ask for directions.',
+    icon: 'map',
+    priority: 6,
+  },
+  
+  // MONEY tips
+  {
+    id: 'tip-money-1',
+    category: TipCategory.MONEY,
+    title: 'Czech Currency - Czech Crown (CZK)',
+    content: 'The official currency is the Czech Crown (Koruna česká, CZK). Czech Republic is not in the Eurozone. Most places accept cards, but always carry some cash for smaller shops, markets, and tips. Current exchange rate: approximately 1 EUR = 24-25 CZK, 1 USD = 22-23 CZK (rates vary).',
+    icon: 'cash',
+    priority: 10,
+  },
+  {
+    id: 'tip-money-2',
+    category: TipCategory.MONEY,
+    title: 'Currency Exchange - Avoid Tourist Traps',
+    content: 'NEVER exchange money at exchange offices in tourist areas (Old Town Square, Wenceslas Square) - they offer terrible rates and hidden fees. Use ATMs instead (they offer fair rates) or exchange at banks. Good exchange offices include: Exchange.cz, Interchange, or banks. Always check the rate and commission before exchanging. Avoid "0% commission" signs - they hide fees in the exchange rate.',
+    icon: 'card',
+    priority: 10,
+  },
+  {
+    id: 'tip-money-3',
+    category: TipCategory.MONEY,
+    title: 'Daily Budget Guide',
+    content: 'Budget traveler: 800-1200 CZK/day (hostel, street food, free attractions). Mid-range: 1500-2500 CZK/day (hotel, restaurants, paid attractions). Luxury: 3000+ CZK/day. Meal costs: Budget restaurant 150-250 CZK, Mid-range 300-500 CZK, Fine dining 600+ CZK. Beer: 40-60 CZK in pubs, 80-120 CZK in tourist areas.',
+    icon: 'wallet',
+    priority: 8,
+  },
+  {
+    id: 'tip-money-4',
+    category: TipCategory.MONEY,
+    title: 'Paying with Cards',
+    content: 'Most restaurants, shops, and hotels accept credit/debit cards (Visa, Mastercard). Contactless payments are very common. However, some smaller shops, markets, and street vendors only accept cash. Always ask before ordering if you\'re not sure. Tipping is usually done in cash even when paying by card.',
+    icon: 'card-outline',
+    priority: 7,
+  },
+  
+  // SAFETY tips
+  {
+    id: 'tip-safety-1',
+    category: TipCategory.SAFETY,
+    title: 'Prague is Generally Very Safe',
+    content: 'Prague is one of the safest cities in Europe. Violent crime is extremely rare. However, like in any major tourist destination, be aware of pickpockets, especially in crowded areas like Charles Bridge, Old Town Square, and on public transport. Keep valuables secure and be cautious of your surroundings.',
+    icon: 'shield-checkmark',
+    priority: 9,
+  },
+  {
+    id: 'tip-safety-2',
+    category: TipCategory.SAFETY,
+    title: 'Common Tourist Scams to Avoid',
+    content: '1) Fake money exchange offices with terrible rates. 2) Taxi drivers overcharging (use Uber/Bolt or official taxis). 3) Pickpockets in crowded areas. 4) "Free" tours that demand payment. 5) People offering to help with tickets then asking for money. 6) Fake police asking to check your wallet. 7) Restaurant menu scams (check prices before ordering). Always trust your instincts and walk away from suspicious situations.',
+    icon: 'warning',
+    priority: 10,
+  },
+  {
+    id: 'tip-safety-3',
+    category: TipCategory.SAFETY,
+    title: 'Protecting Your Belongings',
+    content: 'Keep wallets and phones in front pockets or secure bags. Don\'t leave bags unattended. Be extra careful on trams and metro, especially during rush hours. Avoid displaying expensive jewelry or large amounts of cash. Use hotel safes for passports and extra money. Make copies of important documents and store them separately.',
+    icon: 'lock-closed',
+    priority: 8,
+  },
+  {
+    id: 'tip-safety-4',
+    category: TipCategory.SAFETY,
+    title: 'Safe Areas and Areas to Be Cautious',
+    content: 'Prague is generally safe throughout, but be extra cautious in: Very crowded tourist areas (pickpockets), late-night areas around train stations, and isolated areas after dark. Safe areas include: Old Town, Lesser Town, Vinohrady, and most residential districts. Trust your instincts - if an area feels unsafe, leave.',
+    icon: 'location',
+    priority: 6,
+  },
+  
+  // EMERGENCY tips
+  {
+    id: 'tip-emergency-1',
+    category: TipCategory.EMERGENCY,
+    title: 'Emergency Phone Numbers',
+    content: '112 - European emergency number (police, fire, ambulance). 158 - Police. 150 - Fire department. 155 - Ambulance. 156 - Municipal police. For non-emergency medical issues, visit a pharmacy (lékárna) or call your embassy. EU citizens can use their European Health Insurance Card (EHIC) for emergency treatment.',
+    icon: 'call',
+    priority: 10,
+  },
+  {
+    id: 'tip-emergency-2',
+    category: TipCategory.EMERGENCY,
+    title: 'Lost or Stolen Items',
+    content: 'If something is stolen, report it to police (158) immediately. For lost items on public transport, contact Prague Public Transport lost & found. For lost passports, contact your embassy immediately. Keep embassy contact information with you. Travel insurance is highly recommended to cover theft, loss, and medical emergencies.',
+    icon: 'document-text',
+    priority: 8,
+  },
+  {
+    id: 'tip-emergency-3',
+    category: TipCategory.EMERGENCY,
+    title: 'Medical Emergencies',
+    content: 'For serious emergencies, call 155 (ambulance) or 112. Major hospitals with 24/7 emergency departments include: General University Hospital (VFN), Motol University Hospital. Pharmacies (lékárna) are widely available - look for green cross signs. Many pharmacies are open 24/7. EU citizens should carry EHIC card.',
+    icon: 'medical',
+    priority: 9,
+  },
+  
+  // TIPPING tips
+  {
+    id: 'tip-tipping-1',
+    category: TipCategory.TIPPING,
+    title: 'Tipping in Restaurants',
+    content: 'Tipping is customary but not mandatory. Standard tip: 10-15% of the bill, or round up to the nearest 50 or 100 CZK. For excellent service, 15-20% is appreciated. Tips are usually given in cash, even when paying by card. Simply tell the server the total amount you want to pay (including tip) when paying by card, or leave cash on the table.',
+    icon: 'restaurant',
+    priority: 10,
+  },
+  {
+    id: 'tip-tipping-2',
+    category: TipCategory.TIPPING,
+    title: 'Tipping in Other Places',
+    content: 'Cafés: Round up or 10-20 CZK. Bars: 10-20 CZK per drink or 10% of bill. Taxis: Round up to nearest 10 CZK or 10%. Tour guides: 100-200 CZK per person for half-day tours, 200-500 CZK for full-day tours. Hotel staff: 50-100 CZK for porters, 50-100 CZK per night for housekeeping (left in room).',
+    icon: 'card',
+    priority: 8,
+  },
+  {
+    id: 'tip-tipping-3',
+    category: TipCategory.TIPPING,
+    title: 'When Not to Tip',
+    content: 'You don\'t need to tip: Fast food restaurants, self-service places, when service charge is already included (check your bill), or if service was poor. Tipping is a gesture of appreciation for good service, not an obligation. If you\'re unsure, observe what locals do or simply round up the bill.',
+    icon: 'close-circle',
+    priority: 6,
+  },
+  
+  // INTERNET tips
+  {
+    id: 'tip-internet-1',
+    category: TipCategory.INTERNET,
+    title: 'Free WiFi in Prague',
+    content: 'Free WiFi is widely available in Prague. Most cafés, restaurants, hotels, and public spaces offer free WiFi. Look for networks named "Prague WiFi" in public areas. Many tourist attractions also provide free WiFi. However, be cautious when using public WiFi - avoid accessing sensitive information like banking. Consider using a VPN for added security.',
+    icon: 'wifi',
+    priority: 9,
+  },
+  {
+    id: 'tip-internet-2',
+    category: TipCategory.INTERNET,
+    title: 'Mobile Data and SIM Cards',
+    content: 'EU roaming: If you have an EU SIM card, you can use your data plan in Czech Republic without extra charges (fair use policy applies). For non-EU visitors, consider buying a local SIM card. Major providers: Vodafone, T-Mobile, O2. Prepaid SIM cards cost around 200-300 CZK and include data. You can buy them at airports, train stations, or provider stores.',
+    icon: 'phone-portrait',
+    priority: 7,
+  },
+  
+  // GENERAL tips
+  {
+    id: 'tip-general-1',
+    category: TipCategory.GENERAL,
+    title: 'Best Time to Visit Prague',
+    content: 'Spring (April-May) and Fall (September-October): Best weather, fewer crowds, moderate prices. Summer (June-August): Warm weather but very crowded and higher prices. Winter (December-February): Cold but magical with Christmas markets, fewer tourists, lower prices. January-February: Least crowded but coldest. Avoid major holidays and school breaks for fewer crowds.',
+    icon: 'calendar',
+    priority: 9,
+  },
+  {
+    id: 'tip-general-2',
+    category: TipCategory.GENERAL,
+    title: 'Avoiding Crowds',
+    content: 'Visit major attractions early morning (before 8 AM) or late evening. Charles Bridge is almost empty at sunrise. Visit popular sites on weekdays rather than weekends. Consider visiting in shoulder seasons (April-May, September-October). Stay in neighborhoods like Vinohrady or Žižkov - just 10 minutes from center but much quieter. Book tickets online in advance to skip queues.',
+    icon: 'people',
+    priority: 8,
+  },
+  {
+    id: 'tip-general-3',
+    category: TipCategory.GENERAL,
+    title: 'Tap Water is Safe to Drink',
+    content: 'Tap water in Prague is safe to drink and of high quality. You can drink tap water everywhere - in restaurants, hotels, and public fountains. This will save you money and reduce plastic waste. Bring a reusable water bottle and refill it throughout the day. Many public places have drinking fountains.',
+    icon: 'water',
+    priority: 8,
+  },
+  {
+    id: 'tip-general-4',
+    category: TipCategory.GENERAL,
+    title: 'Basic Czech Phrases',
+    content: 'Hello: Dobrý den (DOH-bree den). Thank you: Děkuji (DYE-koo-yee). Please: Prosím (PRO-seem). Yes: Ano (AH-no). No: Ne (NEH). Excuse me: Promiňte (PRO-min-tyeh). Do you speak English?: Mluvíte anglicky? (MLU-vee-teh an-GLIT-skee). While most people in tourist areas speak English, locals appreciate when you try Czech phrases.',
+    icon: 'chatbubbles',
+    priority: 7,
+  },
+  {
+    id: 'tip-general-5',
+    category: TipCategory.GENERAL,
+    title: 'Language in Prague',
+    content: 'Czech is the official language, but English is widely spoken in tourist areas, hotels, restaurants, and by younger people. You\'ll have no problem getting by with English in Prague. However, learning a few basic Czech phrases (hello, thank you, please) is appreciated by locals and shows respect for the culture.',
+    icon: 'language',
+    priority: 6,
+  },
+  {
+    id: 'tip-general-6',
+    category: TipCategory.GENERAL,
+    title: 'Alcohol Laws',
+    content: 'Legal drinking age is 18. Drinking in public is generally tolerated in parks and some public spaces, but be respectful. Drinking on public transport is prohibited. Some areas have specific restrictions. Don\'t drink and drive - zero tolerance policy. Beer is very cheap and part of Czech culture, but drink responsibly.',
+    icon: 'beer',
+    priority: 5,
+  },
+  {
+    id: 'tip-general-7',
+    category: TipCategory.GENERAL,
+    title: 'Shopping Tips',
+    content: 'Most shops are open Monday-Friday 9 AM-6 PM, Saturday 9 AM-1 PM, closed Sundays. Large shopping centers are open daily including Sundays. Tourist shops in Old Town are open daily but more expensive. For better prices, shop away from main tourist areas. Czech crystal, garnet jewelry, and marionettes are popular souvenirs.',
+    icon: 'bag',
+    priority: 5,
+  },
+  {
+    id: 'tip-general-8',
+    category: TipCategory.GENERAL,
+    title: 'Dress Code and What to Pack',
+    content: 'Prague is casual - no strict dress codes. Comfortable walking shoes are essential (cobblestone streets!). Weather can change quickly - pack layers. In summer: light clothes, sunscreen, hat. In winter: warm coat, gloves, hat, waterproof boots. Umbrella is useful year-round. For churches, cover shoulders and knees (scarves available at entrances).',
+    icon: 'shirt',
+    priority: 6,
+  },
+];
+
+export const seedTips = async (): Promise<void> => {
+  const repo = new TipRepository();
+  const existing = await repo.getAll();
+  const now = new Date();
+
+  if (existing.length > 0) {
+    // Update existing tips
+    for (const existingTip of existing) {
+      const sampleTip = sampleTips.find((t) => t.id === existingTip.id);
+      if (sampleTip) {
+        await repo.update({
+          ...sampleTip,
+          updatedAt: now,
+        });
+      }
+    }
+
+    // Insert any missing tips
+    for (const sampleTip of sampleTips) {
+      const exists = existing.find((t) => t.id === sampleTip.id);
+      if (!exists) {
+        await repo.insert({
+          ...sampleTip,
+          updatedAt: now,
+        });
+      }
+    }
+    return;
+  }
+
+  // Insert sample tips if database is empty
+  for (const tip of sampleTips) {
+    await repo.insert({
+      ...tip,
+      updatedAt: now,
+    });
   }
 };
 

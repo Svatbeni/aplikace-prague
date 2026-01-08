@@ -1,10 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useTheme } from '../../../shared/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { spacing } from '../../../shared/theme/spacing';
 
-export const MoreScreen: React.FC = () => {
+interface MoreScreenProps {
+  navigation: any;
+}
+
+export const MoreScreen: React.FC<MoreScreenProps> = ({ navigation }) => {
   const theme = useTheme();
+
+  const handlePracticalTipsPress = () => {
+    navigation.navigate('PracticalTips');
+  };
 
   return (
     <View
@@ -13,25 +22,53 @@ export const MoreScreen: React.FC = () => {
         { backgroundColor: theme.colors.background },
       ]}
     >
-      <View style={styles.centerContent}>
-        <Ionicons name="menu" size={64} color={theme.colors.textTertiary} />
-        <Text
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <TouchableOpacity
           style={[
-            styles.text,
-            { color: theme.colors.textSecondary },
+            styles.menuItem,
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+            },
           ]}
+          onPress={handlePracticalTipsPress}
+          activeOpacity={0.7}
         >
-          More options coming soon
-        </Text>
-        <Text
-          style={[
-            styles.subtext,
-            { color: theme.colors.textTertiary },
-          ]}
-        >
-          Tours, Tips, Hotels, Weather, and Favorites
-        </Text>
-      </View>
+          <View style={styles.menuItemLeft}>
+            <View
+              style={[
+                styles.iconContainer,
+                { backgroundColor: theme.colors.primary + '20' },
+              ]}
+            >
+              <Ionicons
+                name="information-circle"
+                size={24}
+                color={theme.colors.primary}
+              />
+            </View>
+            <View style={styles.menuItemText}>
+              <Text style={[styles.menuItemTitle, { color: theme.colors.text }]}>
+                Practical Tips
+              </Text>
+              <Text
+                style={[styles.menuItemSubtitle, { color: theme.colors.textSecondary }]}
+              >
+                Essential information for your visit
+              </Text>
+            </View>
+          </View>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.textTertiary}
+          />
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
@@ -40,21 +77,44 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  centerContent: {
+  scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    padding: spacing.md,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.md,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: spacing.md,
+  },
+  menuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: spacing.md,
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
   },
-  text: {
-    marginTop: 24,
-    fontSize: 18,
+  menuItemText: {
+    flex: 1,
+  },
+  menuItemTitle: {
+    fontSize: 16,
     fontWeight: '600',
+    marginBottom: 4,
   },
-  subtext: {
-    marginTop: 8,
+  menuItemSubtitle: {
     fontSize: 14,
-    textAlign: 'center',
   },
 });
 

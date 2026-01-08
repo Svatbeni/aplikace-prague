@@ -18,6 +18,7 @@ import { HotelDetailScreen } from '../features/hotels/screens/HotelDetailScreen'
 import { MapScreen } from '../features/map/screens/MapScreen';
 import { ItinerariesListScreen } from '../features/itineraries/screens/ItinerariesListScreen';
 import { MoreScreen } from '../features/more/screens/MoreScreen';
+import { PracticalTipsScreen } from '../features/practical-tips/screens/PracticalTipsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabsParamList>();
@@ -149,6 +150,15 @@ export const AppNavigator = () => {
           component={HotelDetailScreen}
           options={{
             headerShown: false,
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen
+          name="PracticalTips"
+          component={PracticalTipsScreen}
+          options={{
+            headerShown: true,
+            headerTitle: 'Practical Tips',
             presentation: 'card',
           }}
         />
