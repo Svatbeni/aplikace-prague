@@ -13,10 +13,13 @@ import { PlaceRepository } from '../../../shared/repositories/PlaceRepository';
 import { Place, PlaceCategory } from '../../../types';
 import { categoryLabels } from '../../../shared/constants/categories';
 import { Ionicons } from '@expo/vector-icons';
+import * as Location from 'expo-location';
 
 interface PlacesListScreenProps {
   navigation: any;
 }
+
+type FilterType = 'nearest' | PlaceCategory | null;
 
 export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
   navigation,
@@ -24,23 +27,97 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
   const theme = useTheme();
   const [places, setPlaces] = useState<Place[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<Place[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<PlaceCategory | null>(
-    null
-  );
+  const [selectedFilter, setSelectedFilter] = useState<FilterType>('nearest');
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
 
   useEffect(() => {
     loadPlaces();
+    if (selectedFilter === 'nearest') {
+      requestLocationPermission();
+    }
   }, []);
 
   useEffect(() => {
-    if (selectedCategory) {
-      const filtered = places.filter((p) => p.category === selectedCategory);
-      setFilteredPlaces(filtered);
-    } else {
-      setFilteredPlaces(places);
+    applyFilter();
+  }, [selectedFilter, places, userLocation]);
+
+  const requestLocationPermission = async () => {
+    try {
+      setIsLoadingLocation(true);
+      setLocationPermissionDenied(false);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === 'granted') {
+        const location = await Location.getCurrentPositionAsync({});
+        setUserLocation({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+      } else {
+        setLocationPermissionDenied(true);
+      }
+    } catch (error) {
+      console.error('Failed to get location:', error);
+      setLocationPermissionDenied(true);
+    } finally {
+      setIsLoadingLocation(false);
     }
-  }, [selectedCategory, places]);
+  };
+
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): number => {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  };
+
+  const applyFilter = async () => {
+    let filtered = [...places];
+
+    if (selectedFilter === 'nearest') {
+      if (userLocation) {
+        // Calculate distances and sort
+        filtered = filtered
+          .map((place) => ({
+            place,
+            distance: calculateDistance(
+              userLocation.latitude,
+              userLocation.longitude,
+              place.latitude,
+              place.longitude
+            ),
+          }))
+          .sort((a, b) => a.distance - b.distance)
+          .map((item) => item.place);
+      } else if (!isLoadingLocation && !locationPermissionDenied) {
+        // If location is not available and we're not loading, request it
+        await requestLocationPermission();
+        return; // Will re-run after location is set
+      }
+      // If permission denied, just show all places without sorting
+    } else if (selectedFilter) {
+      filtered = filtered.filter((p) => p.category === selectedFilter);
+    }
+
+    setFilteredPlaces(filtered);
+  };
 
   const loadPlaces = async () => {
     try {
@@ -48,7 +125,6 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
       const repo = new PlaceRepository();
       const allPlaces = await repo.getAll();
       setPlaces(allPlaces);
-      setFilteredPlaces(allPlaces);
     } catch (error) {
       console.error('Failed to load places:', error);
     } finally {
@@ -56,7 +132,15 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
     }
   };
 
-  const categories: (PlaceCategory | null)[] = [
+  const handleFilterChange = async (filter: FilterType) => {
+    setSelectedFilter(filter);
+    if (filter === 'nearest' && !userLocation && !locationPermissionDenied) {
+      await requestLocationPermission();
+    }
+  };
+
+  const filters: FilterType[] = [
+    'nearest',
     null,
     PlaceCategory.SIGHTSEEING,
     PlaceCategory.HIDDEN_GEMS,
@@ -65,15 +149,21 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
     PlaceCategory.VIEWPOINTS,
   ];
 
+  const getFilterLabel = (filter: FilterType): string => {
+    if (filter === 'nearest') return 'Nearest';
+    if (filter === null) return 'All';
+    return categoryLabels[filter];
+  };
+
   const renderCategoryFilter = () => (
     <View style={styles.categoryContainer}>
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
-        data={categories}
-        keyExtractor={(item) => item || 'all'}
+        data={filters}
+        keyExtractor={(item) => (item === 'nearest' ? 'nearest' : item || 'all')}
         renderItem={({ item }) => {
-          const isSelected = selectedCategory === item;
+          const isSelected = selectedFilter === item;
           return (
             <TouchableOpacity
               style={[
@@ -85,8 +175,16 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
                   borderColor: theme.colors.border,
                 },
               ]}
-              onPress={() => setSelectedCategory(item)}
+              onPress={() => handleFilterChange(item)}
             >
+              {item === 'nearest' && (
+                <Ionicons
+                  name="location"
+                  size={14}
+                  color={isSelected ? '#FFFFFF' : theme.colors.text}
+                  style={styles.filterIcon}
+                />
+              )}
               <Text
                 style={[
                   styles.categoryChipText,
@@ -97,7 +195,7 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
                   },
                 ]}
               >
-                {item ? categoryLabels[item] : 'All'}
+                {getFilterLabel(item)}
               </Text>
             </TouchableOpacity>
           );
@@ -107,7 +205,7 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
     </View>
   );
 
-  if (isLoading) {
+  if (isLoading || (selectedFilter === 'nearest' && isLoadingLocation && !userLocation)) {
     return (
       <View
         style={[
@@ -123,7 +221,9 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
             { color: theme.colors.textSecondary },
           ]}
         >
-          Loading places...
+          {isLoadingLocation && selectedFilter === 'nearest'
+            ? 'Getting your location...'
+            : 'Loading places...'}
         </Text>
       </View>
     );
@@ -191,6 +291,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     marginRight: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  filterIcon: {
+    marginRight: -2,
   },
   categoryChipText: {
     fontSize: 14,
