@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../../shared/theme';
-import { Icon } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 export const ItinerariesListScreen: React.FC = () => {
   const theme = useTheme();
@@ -14,7 +14,7 @@ export const ItinerariesListScreen: React.FC = () => {
       ]}
     >
       <View style={styles.centerContent}>
-        <Icon name="route" size={64} color={theme.colors.textTertiary} />
+        <Ionicons name="map-outline" size={64} color={theme.colors.textTertiary} />
         <Text
           style={[
             styles.text,

@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Icon } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../shared/theme';
 import { RootStackParamList, MainTabsParamList } from '../types';
 
@@ -39,7 +39,7 @@ const MainTabsNavigator = () => {
         component={PlacesListScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="map-pin" size={size} color={color} />
+            <Ionicons name="location" size={size} color={color} />
           ),
           headerShown: true,
           headerTitle: 'Places to Visit',
@@ -50,7 +50,7 @@ const MainTabsNavigator = () => {
         component={MapScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="map" size={size} color={color} />
+            <Ionicons name="map" size={size} color={color} />
           ),
         }}
       />
@@ -59,7 +59,7 @@ const MainTabsNavigator = () => {
         component={ItinerariesListScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="route" size={size} color={color} />
+            <Ionicons name="list" size={size} color={color} />
           ),
           headerShown: true,
           headerTitle: 'Itineraries',
@@ -70,7 +70,7 @@ const MainTabsNavigator = () => {
         component={MoreScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Icon name="menu" size={size} color={color} />
+            <Ionicons name="menu" size={size} color={color} />
           ),
           headerShown: true,
           headerTitle: 'More',

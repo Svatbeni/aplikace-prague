@@ -11,7 +11,7 @@ import { useTheme } from '../../../shared/theme';
 import { PlaceRepository } from '../../../shared/repositories/PlaceRepository';
 import { Place, PlaceCategory } from '../../../types';
 import { getCategoryColor } from '../../../shared/theme/colors';
-import { Icon } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 
 interface MapScreenProps {
@@ -153,7 +153,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
             All
           </Text>
         </TouchableOpacity>
-        {Object.values(PlaceCategory).map((category) => (
+        {(Object.values(PlaceCategory) as PlaceCategory[]).map((category) => (
           <TouchableOpacity
             key={category}
             style={[
@@ -172,8 +172,8 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
               )
             }
           >
-            <Icon
-              name="circle"
+            <Ionicons
+              name="ellipse"
               size={12}
               color={
                 selectedCategory === category

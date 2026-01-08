@@ -16,7 +16,7 @@ import { categoryLabels } from '../../../shared/constants/categories';
 import { getCategoryColor } from '../../../shared/theme/colors';
 import { useFavoritesStore } from '../../../shared/stores/favoritesStore';
 import { FavoriteType } from '../../../types';
-import { Icon } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 interface PlaceDetailScreenProps {
   route: { params: { placeId: string } };
@@ -99,21 +99,21 @@ export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({
               { backgroundColor: theme.colors.surfaceVariant },
             ]}
           >
-            <Icon name="image" size={48} color={theme.colors.textTertiary} />
+            <Ionicons name="image-outline" size={48} color={theme.colors.textTertiary} />
           </View>
         )}
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Icon name="arrow-left" size={24} color="#FFFFFF" />
+          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.favoriteButton}
           onPress={handleFavorite}
         >
-          <Icon
-            name={isFav ? 'heart' : 'heart-o'}
+          <Ionicons
+            name={isFav ? 'heart' : 'heart-outline'}
             size={24}
             color={isFav ? theme.colors.favorite : '#FFFFFF'}
           />
@@ -140,7 +140,7 @@ export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({
 
         {place.address && (
           <View style={styles.metaRow}>
-            <Icon name="map-pin" size={16} color={theme.colors.textSecondary} />
+            <Ionicons name="location" size={16} color={theme.colors.textSecondary} />
             <Text
               style={[styles.metaText, { color: theme.colors.textSecondary }]}
             >
@@ -152,8 +152,8 @@ export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({
         <View style={styles.metaRow}>
           {place.estimatedVisitDuration && (
             <>
-              <Icon
-                name="clock"
+              <Ionicons
+                name="time-outline"
                 size={16}
                 color={theme.colors.textSecondary}
               />
@@ -169,8 +169,8 @@ export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({
           )}
           {place.priceRange && (
             <>
-              <Icon
-                name="dollar-sign"
+              <Ionicons
+                name="cash-outline"
                 size={16}
                 color={theme.colors.textSecondary}
               />
@@ -247,7 +247,7 @@ export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({
           ]}
           onPress={handleOpenMaps}
         >
-          <Icon name="map" size={20} color="#FFFFFF" />
+          <Ionicons name="map-outline" size={20} color="#FFFFFF" />
           <Text style={styles.mapButtonText}>Open in Maps</Text>
         </TouchableOpacity>
       </View>

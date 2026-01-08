@@ -3,8 +3,9 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import { Card } from './Card';
 import { useTheme } from '../theme';
 import { Place } from '../../types';
-import { categoryLabels, getCategoryColor } from '../theme/colors';
-import { Icon } from '@expo/vector-icons';
+import { categoryLabels } from '../constants/categories';
+import { getCategoryColor } from '../theme/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 interface PlaceCardProps {
   place: Place;
@@ -31,7 +32,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onPress }) => {
               { backgroundColor: theme.colors.surfaceVariant },
             ]}
           >
-            <Icon name="image" size={32} color={theme.colors.textTertiary} />
+            <Ionicons name="image-outline" size={32} color={theme.colors.textTertiary} />
           </View>
         )}
         <View
@@ -46,7 +47,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onPress }) => {
         </View>
         {place.isPremium && (
           <View style={styles.premiumBadge}>
-            <Icon name="star" size={16} color={theme.colors.premium} />
+            <Ionicons name="star" size={16} color={theme.colors.premium} />
           </View>
         )}
       </View>
@@ -74,8 +75,8 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onPress }) => {
         <View style={styles.footer}>
           {place.estimatedVisitDuration && (
             <View style={styles.meta}>
-              <Icon
-                name="clock"
+              <Ionicons
+                name="time-outline"
                 size={14}
                 color={theme.colors.textTertiary}
               />
@@ -91,8 +92,8 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onPress }) => {
           )}
           {place.priceRange && place.priceRange !== 'free' && (
             <View style={styles.meta}>
-              <Icon
-                name="dollar-sign"
+              <Ionicons
+                name="cash-outline"
                 size={14}
                 color={theme.colors.textTertiary}
               />

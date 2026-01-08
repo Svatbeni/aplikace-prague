@@ -12,7 +12,7 @@ import { useTheme } from '../../../shared/theme';
 import { PlaceRepository } from '../../../shared/repositories/PlaceRepository';
 import { Place, PlaceCategory } from '../../../types';
 import { categoryLabels } from '../../../shared/constants/categories';
-import { Icon } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 interface PlacesListScreenProps {
   navigation: any;
@@ -148,7 +148,7 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Icon name="map-pin" size={48} color={theme.colors.textTertiary} />
+            <Ionicons name="location-outline" size={48} color={theme.colors.textTertiary} />
             <Text
               style={[
                 styles.emptyText,

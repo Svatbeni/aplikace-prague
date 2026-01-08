@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../../shared/theme';
-import { Icon } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 export const MoreScreen: React.FC = () => {
   const theme = useTheme();
@@ -14,7 +14,7 @@ export const MoreScreen: React.FC = () => {
       ]}
     >
       <View style={styles.centerContent}>
-        <Icon name="menu" size={64} color={theme.colors.textTertiary} />
+        <Ionicons name="menu" size={64} color={theme.colors.textTertiary} />
         <Text
           style={[
             styles.text,
