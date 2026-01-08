@@ -62,8 +62,7 @@ const MainTabsNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="location" size={size} color={color} />
           ),
-          headerShown: true,
-          headerTitle: 'Places to Visit',
+          headerShown: false,
         }}
       />
       <Tab.Screen

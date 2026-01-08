@@ -11,9 +11,11 @@ import { PlaceCard } from '../../../shared/components/PlaceCard';
 import { useTheme } from '../../../shared/theme';
 import { PlaceRepository } from '../../../shared/repositories/PlaceRepository';
 import { Place, PlaceCategory } from '../../../types';
-import { categoryLabels } from '../../../shared/constants/categories';
+import { categoryLabels, categoryIcons } from '../../../shared/constants/categories';
+import { getCategoryColor } from '../../../shared/theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface PlacesListScreenProps {
   navigation: any;
@@ -25,6 +27,7 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
   navigation,
 }) => {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [places, setPlaces] = useState<Place[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<Place[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('nearest');
@@ -160,32 +163,44 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
   };
 
   const renderCategoryFilter = () => (
-    <View style={styles.categoryContainer}>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={filters}
-        keyExtractor={(item) => (item === 'nearest' ? 'nearest' : item || 'all')}
-        renderItem={({ item }) => {
+    <View style={[styles.categoryContainer, { 
+      backgroundColor: theme.colors.background,
+      paddingTop: insets.top + 8,
+    }]}>
+      <View style={styles.filterWrapper}>
+        {filters.map((item) => {
           const isSelected = selectedFilter === item;
+          let iconName: keyof typeof Ionicons.glyphMap | null = null;
+          let categoryColor = theme.colors.primary;
+          
+          if (item === 'nearest') {
+            iconName = 'location';
+          } else if (item === null) {
+            // All filter - no icon
+          } else {
+            iconName = categoryIcons[item] as keyof typeof Ionicons.glyphMap;
+            categoryColor = getCategoryColor(item, theme.isDark);
+          }
+
           return (
             <TouchableOpacity
+              key={item === 'nearest' ? 'nearest' : item || 'all'}
               style={[
                 styles.categoryChip,
                 {
                   backgroundColor: isSelected
-                    ? theme.colors.primary
+                    ? (item === null ? theme.colors.primary : item === 'nearest' ? theme.colors.primary : categoryColor)
                     : theme.colors.surface,
                   borderColor: theme.colors.border,
                 },
               ]}
               onPress={() => handleFilterChange(item)}
             >
-              {item === 'nearest' && (
+              {iconName && (
                 <Ionicons
-                  name="location"
-                  size={14}
-                  color={isSelected ? '#FFFFFF' : theme.colors.text}
+                  name={iconName}
+                  size={12}
+                  color={isSelected ? '#FFFFFF' : (item === 'nearest' ? theme.colors.text : categoryColor)}
                   style={styles.filterIcon}
                 />
               )}
@@ -193,9 +208,7 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
                 style={[
                   styles.categoryChipText,
                   {
-                    color: isSelected
-                      ? '#FFFFFF'
-                      : theme.colors.text,
+                    color: isSelected ? '#FFFFFF' : theme.colors.text,
                   },
                 ]}
               >
@@ -203,9 +216,8 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
               </Text>
             </TouchableOpacity>
           );
-        }}
-        contentContainerStyle={styles.categoryList}
-      />
+        })}
+      </View>
     </View>
   );
 
@@ -281,30 +293,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   categoryContainer: {
-    paddingVertical: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
-  categoryList: {
-    paddingHorizontal: 16,
-    gap: 8,
-  },
-  categoryChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    marginRight: 8,
+  filterWrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
+    flexWrap: 'wrap',
     gap: 6,
   },
+  categoryChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    minHeight: 36,
+  },
   filterIcon: {
-    marginRight: -2,
+    marginRight: 0,
   },
   categoryChipText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: '600',
   },
   listContent: {
     padding: 16,
