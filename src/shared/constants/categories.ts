@@ -12,7 +12,7 @@ export const categoryIcons: Record<PlaceCategory, string> = {
   [PlaceCategory.SIGHTSEEING]: 'camera',
   [PlaceCategory.HIDDEN_GEMS]: 'star',
   [PlaceCategory.FOOD]: 'restaurant',
-  [PlaceCategory.NATURE]: 'tree',
+  [PlaceCategory.NATURE]: 'leaf',
   [PlaceCategory.VIEWPOINTS]: 'eye',
 };
 

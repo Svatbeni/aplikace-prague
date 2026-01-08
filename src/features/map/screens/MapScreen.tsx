@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   View,
   StyleSheet,
@@ -11,12 +11,30 @@ import { useTheme } from '../../../shared/theme';
 import { PlaceRepository } from '../../../shared/repositories/PlaceRepository';
 import { Place, PlaceCategory } from '../../../types';
 import { getCategoryColor } from '../../../shared/theme/colors';
+import { categoryIcons } from '../../../shared/constants/categories';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 
 interface MapScreenProps {
   navigation: any;
 }
+
+// Ultra-lightweight marker - minimal re-renders
+const CategoryMarker = React.memo<{
+  category: PlaceCategory;
+  isDark: boolean;
+}>(({ category, isDark }) => {
+  const iconName = categoryIcons[category] as keyof typeof Ionicons.glyphMap;
+  const color = getCategoryColor(category, isDark);
+  
+  return (
+    <View style={[styles.markerContainer, { backgroundColor: color }]}>
+      <Ionicons name={iconName} size={16} color="#FFFFFF" />
+    </View>
+  );
+}, (prev, next) => prev.category === next.category && prev.isDark === next.isDark);
+
+CategoryMarker.displayName = 'CategoryMarker';
 
 export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   const theme = useTheme();
@@ -29,11 +47,19 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
     longitude: number;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [tracksViewChanges, setTracksViewChanges] = useState(true);
 
   useEffect(() => {
     loadPlaces();
     requestLocationPermission();
   }, []);
+
+  // Disable tracksViewChanges after map is ready for better performance
+  const handleMapReady = () => {
+    setTimeout(() => {
+      setTracksViewChanges(false);
+    }, 500);
+  };
 
   const loadPlaces = async () => {
     try {
@@ -63,9 +89,11 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
     }
   };
 
-  const filteredPlaces = selectedCategory
-    ? places.filter((p) => p.category === selectedCategory)
-    : places;
+  const filteredPlaces = useMemo(() => {
+    return selectedCategory
+      ? places.filter((p) => p.category === selectedCategory)
+      : places;
+  }, [places, selectedCategory]);
 
   const region = userLocation
     ? {
@@ -103,25 +131,27 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
         initialRegion={region}
         showsUserLocation={!!userLocation}
         showsMyLocationButton={true}
+        removeClippedSubviews={true}
+        maxZoomLevel={18}
+        onMapReady={handleMapReady}
       >
-        {filteredPlaces.map((place) => {
-          const categoryColor = getCategoryColor(place.category, theme.isDark);
-          return (
-            <Marker
-              key={place.id}
-              coordinate={{
-                latitude: place.latitude,
-                longitude: place.longitude,
-              }}
-              title={place.name}
-              description={place.shortDescription}
-              onPress={() => {
-                navigation.navigate('PlaceDetail', { placeId: place.id });
-              }}
-              pinColor={categoryColor}
-            />
-          );
-        })}
+        {filteredPlaces.map((place) => (
+          <Marker
+            key={place.id}
+            coordinate={{
+              latitude: place.latitude,
+              longitude: place.longitude,
+            }}
+            title={place.name}
+            description={place.shortDescription}
+            onPress={() => {
+              navigation.navigate('PlaceDetail', { placeId: place.id });
+            }}
+            tracksViewChanges={tracksViewChanges}
+          >
+            <CategoryMarker category={place.category} isDark={theme.isDark} />
+          </Marker>
+        ))}
       </MapView>
 
       {/* Category Filter Overlay */}
@@ -226,6 +256,15 @@ const styles = StyleSheet.create({
   filterButtonText: {
     fontSize: 12,
     fontWeight: '600',
+  },
+  markerContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
 });
 
