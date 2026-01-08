@@ -214,6 +214,7 @@ export type RootStackParamList = {
   HotelDetail: { hotelId: string };
   PracticalTips: undefined;
   Weather: undefined;
+  AboutUs: undefined;
 };
 
 export type MainTabsParamList = {

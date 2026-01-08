@@ -20,6 +20,7 @@ import { ItinerariesListScreen } from '../features/itineraries/screens/Itinerari
 import { MoreScreen } from '../features/more/screens/MoreScreen';
 import { PracticalTipsScreen } from '../features/practical-tips/screens/PracticalTipsScreen';
 import { WeatherScreen } from '../features/weather/screens/WeatherScreen';
+import { AboutUsScreen } from '../features/more/screens/AboutUsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabsParamList>();
@@ -180,6 +181,15 @@ export const AppNavigator = () => {
           options={{
             headerShown: true,
             headerTitle: 'Weather',
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen
+          name="AboutUs"
+          component={AboutUsScreen}
+          options={{
+            headerShown: true,
+            headerTitle: 'About Us',
             presentation: 'card',
           }}
         />

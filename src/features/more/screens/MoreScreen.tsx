@@ -15,6 +15,10 @@ export const MoreScreen: React.FC<MoreScreenProps> = ({ navigation }) => {
     navigation.navigate('PracticalTips');
   };
 
+  const handleAboutUsPress = () => {
+    navigation.navigate('AboutUs');
+  };
+
   return (
     <View
       style={[
@@ -59,6 +63,48 @@ export const MoreScreen: React.FC<MoreScreenProps> = ({ navigation }) => {
                 style={[styles.menuItemSubtitle, { color: theme.colors.textSecondary }]}
               >
                 Essential information for your visit
+              </Text>
+            </View>
+          </View>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.textTertiary}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.menuItem,
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+            },
+          ]}
+          onPress={handleAboutUsPress}
+          activeOpacity={0.7}
+        >
+          <View style={styles.menuItemLeft}>
+            <View
+              style={[
+                styles.iconContainer,
+                { backgroundColor: theme.colors.primary + '20' },
+              ]}
+            >
+              <Ionicons
+                name="people"
+                size={24}
+                color={theme.colors.primary}
+              />
+            </View>
+            <View style={styles.menuItemText}>
+              <Text style={[styles.menuItemTitle, { color: theme.colors.text }]}>
+                About Us
+              </Text>
+              <Text
+                style={[styles.menuItemSubtitle, { color: theme.colors.textSecondary }]}
+              >
+                Meet Adriana and Matěj
               </Text>
             </View>
           </View>
