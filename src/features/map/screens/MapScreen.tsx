@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -126,11 +126,38 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   const [tracksViewChanges, setTracksViewChanges] = useState(true);
   const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const tracksTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     loadPlaces();
     requestLocationPermission();
   }, []);
+
+  // Clear selected place and manage tracksViewChanges when category filter changes
+  useEffect(() => {
+    setSelectedPlace(null);
+    
+    // Clear any existing timeout
+    if (tracksTimeoutRef.current) {
+      clearTimeout(tracksTimeoutRef.current);
+    }
+    
+    // Enable tracksViewChanges immediately for smooth marker updates
+    setTracksViewChanges(true);
+    
+    // Disable after markers have been updated
+    tracksTimeoutRef.current = setTimeout(() => {
+      setTracksViewChanges(false);
+      tracksTimeoutRef.current = null;
+    }, 800);
+    
+    return () => {
+      if (tracksTimeoutRef.current) {
+        clearTimeout(tracksTimeoutRef.current);
+        tracksTimeoutRef.current = null;
+      }
+    };
+  }, [selectedCategory]);
 
   // Disable tracksViewChanges after map is ready for better performance
   const handleMapReady = () => {
@@ -168,9 +195,13 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   };
 
   const filteredPlaces = useMemo(() => {
-    return selectedCategory
-      ? places.filter((p) => p.category === selectedCategory)
-      : places;
+    if (!places || places.length === 0) {
+      return [];
+    }
+    if (selectedCategory === null) {
+      return places;
+    }
+    return places.filter((p) => p.category === selectedCategory);
   }, [places, selectedCategory]);
 
   const region = userLocation
@@ -209,7 +240,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
         initialRegion={region}
         showsUserLocation={!!userLocation}
         showsMyLocationButton={true}
-        removeClippedSubviews={true}
+        removeClippedSubviews={false}
         maxZoomLevel={18}
         onMapReady={handleMapReady}
       >
@@ -270,7 +301,9 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
               borderColor: theme.colors.border,
             },
           ]}
-          onPress={() => setSelectedCategory(null)}
+          onPress={() => {
+            setSelectedCategory(null);
+          }}
         >
           <Text
             style={[
@@ -299,11 +332,11 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
                 borderColor: theme.colors.border,
               },
             ]}
-            onPress={() =>
-              setSelectedCategory(
-                selectedCategory === category ? null : category
-              )
-            }
+            onPress={() => {
+              // Explicitly set the new category (don't toggle if already selected)
+              const newCategory = selectedCategory === category ? null : category;
+              setSelectedCategory(newCategory);
+            }}
           >
             <Ionicons
               name="ellipse"
