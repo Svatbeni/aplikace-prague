@@ -5,13 +5,14 @@ import {
   ActivityIndicator,
   Text,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useTheme } from '../../../shared/theme';
 import { PlaceRepository } from '../../../shared/repositories/PlaceRepository';
 import { Place, PlaceCategory } from '../../../types';
 import { getCategoryColor } from '../../../shared/theme/colors';
-import { categoryIcons } from '../../../shared/constants/categories';
+import { categoryIcons, categoryLabels } from '../../../shared/constants/categories';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 
@@ -36,6 +37,81 @@ const CategoryMarker = React.memo<{
 
 CategoryMarker.displayName = 'CategoryMarker';
 
+// Lightweight popup card component
+const PlaceCallout = React.memo<{
+  place: Place;
+  theme: ReturnType<typeof useTheme>;
+  onPress: () => void;
+}>(({ place, theme, onPress }) => {
+  const categoryColor = getCategoryColor(place.category, theme.isDark);
+  
+  return (
+    <TouchableOpacity
+      style={[
+        styles.calloutContainer,
+        {
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+        },
+      ]}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <View style={styles.calloutContent}>
+        <View style={styles.calloutHeader}>
+          <Text
+            style={[styles.calloutTitle, { color: theme.colors.text }]}
+            numberOfLines={1}
+          >
+            {place.name}
+          </Text>
+          <View
+            style={[
+              styles.calloutCategoryBadge,
+              { backgroundColor: categoryColor },
+            ]}
+          >
+            <Text style={styles.calloutCategoryText}>
+              {categoryLabels[place.category]}
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={[styles.calloutDescription, { color: theme.colors.textSecondary }]}
+          numberOfLines={2}
+        >
+          {place.shortDescription}
+        </Text>
+        <View style={styles.calloutFooter}>
+          {place.estimatedVisitDuration && (
+            <View style={styles.calloutMeta}>
+              <Ionicons
+                name="time-outline"
+                size={14}
+                color={theme.colors.textTertiary}
+              />
+              <Text
+                style={[styles.calloutMetaText, { color: theme.colors.textTertiary }]}
+              >
+                {place.estimatedVisitDuration} min
+              </Text>
+            </View>
+          )}
+          <View style={styles.calloutArrow}>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={theme.colors.primary}
+            />
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}, (prev, next) => prev.place.id === next.place.id);
+
+PlaceCallout.displayName = 'PlaceCallout';
+
 export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   const theme = useTheme();
   const [places, setPlaces] = useState<Place[]>([]);
@@ -48,6 +124,8 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [tracksViewChanges, setTracksViewChanges] = useState(true);
+  const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
   useEffect(() => {
     loadPlaces();
@@ -142,17 +220,42 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
               latitude: place.latitude,
               longitude: place.longitude,
             }}
-            title={place.name}
-            description={place.shortDescription}
-            onPress={() => {
-              navigation.navigate('PlaceDetail', { placeId: place.id });
-            }}
             tracksViewChanges={tracksViewChanges}
+            onPress={() => {
+              setSelectedPlace(place);
+            }}
           >
             <CategoryMarker category={place.category} isDark={theme.isDark} />
           </Marker>
         ))}
       </MapView>
+
+      {/* Custom Popup Overlay */}
+      {selectedPlace && (
+        <View style={styles.overlay}>
+          <TouchableOpacity
+            style={styles.overlayBackdrop}
+            activeOpacity={1}
+            onPress={() => setSelectedPlace(null)}
+          />
+          <View style={styles.popupContainer}>
+            <PlaceCallout
+              place={selectedPlace}
+              theme={theme}
+              onPress={() => {
+                navigation.navigate('PlaceDetail', { placeId: selectedPlace.id });
+                setSelectedPlace(null);
+              }}
+            />
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setSelectedPlace(null)}
+            >
+              <Ionicons name="close" size={24} color={theme.colors.text} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       {/* Category Filter Overlay */}
       <View style={styles.filterContainer}>
@@ -265,6 +368,107 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#FFFFFF',
+  },
+  calloutWrapper: {
+    width: Math.min(Dimensions.get('window').width * 0.75, 350),
+  },
+  calloutContainer: {
+    width: '100%',
+    minHeight: 160,
+    borderRadius: 16,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  calloutContent: {
+    padding: 18,
+  },
+  calloutHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+    gap: 10,
+  },
+  calloutTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    flex: 1,
+  },
+  calloutCategoryBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  calloutCategoryText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  calloutDescription: {
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  calloutFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  calloutMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  calloutMetaText: {
+    fontSize: 13,
+  },
+  calloutArrow: {
+    marginLeft: 'auto',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  overlayBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  popupContainer: {
+    width: Dimensions.get('window').width * 0.85,
+    maxWidth: 400,
+    position: 'relative',
+    zIndex: 1001,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: -12,
+    right: -12,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 1002,
   },
 });
 
