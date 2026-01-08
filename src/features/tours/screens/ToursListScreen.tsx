@@ -12,15 +12,65 @@ import { useTheme } from '../../../shared/theme';
 import { TourRepository } from '../../../shared/repositories/TourRepository';
 import { Tour } from '../../../types';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ToursListScreenProps {
   navigation: any;
 }
 
+const getTourCategoryColor = (category: string | null, isDark: boolean): string => {
+  if (!category) return isDark ? '#42A5F5' : '#1E88E5';
+  
+  const colors = isDark ? {
+    sightseeing: '#42A5F5',
+    walking: '#BA68C8',
+    cruise: '#42A5F5',
+    food: '#FFB74D',
+    beer: '#FFB74D',
+    dayTrip: '#81C784',
+    segway: '#EF5350',
+  } : {
+    sightseeing: '#2196F3',
+    walking: '#9C27B0',
+    cruise: '#2196F3',
+    food: '#FF9800',
+    beer: '#FF9800',
+    dayTrip: '#4CAF50',
+    segway: '#F44336',
+  };
+
+  const categoryLower = category.toLowerCase();
+  if (categoryLower.includes('sightseeing')) return colors.sightseeing;
+  if (categoryLower.includes('walking')) return colors.walking;
+  if (categoryLower.includes('cruise')) return colors.cruise;
+  if (categoryLower.includes('food')) return colors.food;
+  if (categoryLower.includes('beer')) return colors.beer;
+  if (categoryLower.includes('day trip')) return colors.dayTrip;
+  if (categoryLower.includes('segway')) return colors.segway;
+  
+  return isDark ? '#42A5F5' : '#1E88E5';
+};
+
+const getTourCategoryIcon = (category: string | null): keyof typeof Ionicons.glyphMap | null => {
+  if (!category) return null;
+  
+  const categoryLower = category.toLowerCase();
+  if (categoryLower.includes('sightseeing')) return 'star';
+  if (categoryLower.includes('walking')) return 'footsteps';
+  if (categoryLower.includes('cruise')) return 'boat';
+  if (categoryLower.includes('food')) return 'restaurant';
+  if (categoryLower.includes('beer')) return 'wine';
+  if (categoryLower.includes('day trip')) return 'map';
+  if (categoryLower.includes('segway')) return 'bicycle';
+  
+  return 'ticket';
+};
+
 export const ToursListScreen: React.FC<ToursListScreenProps> = ({
   navigation,
 }) => {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [tours, setTours] = useState<Tour[]>([]);
   const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -68,34 +118,43 @@ export const ToursListScreen: React.FC<ToursListScreenProps> = ({
   }, [tours]);
 
   const renderCategoryFilter = () => (
-    <View style={styles.categoryContainer}>
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={categories}
-        keyExtractor={(item) => item || 'all'}
-        renderItem={({ item }) => {
+    <View style={[styles.categoryContainer, { 
+      backgroundColor: theme.colors.background,
+      paddingTop: insets.top + 8,
+    }]}>
+      <View style={styles.filterWrapper}>
+        {categories.map((item) => {
           const isSelected = selectedCategory === item;
+          const categoryColor = getTourCategoryColor(item, theme.isDark);
+          const iconName = getTourCategoryIcon(item);
+          
           return (
             <TouchableOpacity
+              key={item || 'all'}
               style={[
                 styles.categoryChip,
                 {
                   backgroundColor: isSelected
-                    ? theme.colors.primary
+                    ? (item ? categoryColor : theme.colors.primary)
                     : theme.colors.surface,
                   borderColor: theme.colors.border,
                 },
               ]}
               onPress={() => setSelectedCategory(item)}
             >
+              {iconName && (
+                <Ionicons
+                  name={iconName}
+                  size={12}
+                  color={isSelected ? '#FFFFFF' : (item ? categoryColor : theme.colors.text)}
+                  style={styles.filterIcon}
+                />
+              )}
               <Text
                 style={[
                   styles.categoryChipText,
                   {
-                    color: isSelected
-                      ? '#FFFFFF'
-                      : theme.colors.text,
+                    color: isSelected ? '#FFFFFF' : theme.colors.text,
                   },
                 ]}
               >
@@ -103,9 +162,8 @@ export const ToursListScreen: React.FC<ToursListScreenProps> = ({
               </Text>
             </TouchableOpacity>
           );
-        }}
-        contentContainerStyle={styles.categoryList}
-      />
+        })}
+      </View>
     </View>
   );
 
@@ -179,24 +237,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   categoryContainer: {
-    paddingVertical: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
-  categoryList: {
-    paddingHorizontal: 16,
-    gap: 8,
+  filterWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
   },
   categoryChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
     borderWidth: 1,
-    marginRight: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    minHeight: 36,
+  },
+  filterIcon: {
+    marginRight: 0,
   },
   categoryChipText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: '600',
   },
   listContent: {
     padding: 16,

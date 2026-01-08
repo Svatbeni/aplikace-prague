@@ -30,7 +30,7 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
   const insets = useSafeAreaInsets();
   const [places, setPlaces] = useState<Place[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<Place[]>([]);
-  const [selectedFilter, setSelectedFilter] = useState<FilterType>('nearest');
+  const [selectedFilter, setSelectedFilter] = useState<FilterType>(PlaceCategory.SIGHTSEEING);
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -144,7 +144,6 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
 
   const filters: FilterType[] = [
     'nearest',
-    null,
     PlaceCategory.SIGHTSEEING,
     PlaceCategory.HIDDEN_GEMS,
     PlaceCategory.BIZARRE,
@@ -175,8 +174,6 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
           
           if (item === 'nearest') {
             iconName = 'location';
-          } else if (item === null) {
-            // All filter - no icon
           } else {
             iconName = categoryIcons[item] as keyof typeof Ionicons.glyphMap;
             categoryColor = getCategoryColor(item, theme.isDark);
@@ -184,12 +181,12 @@ export const PlacesListScreen: React.FC<PlacesListScreenProps> = ({
 
           return (
             <TouchableOpacity
-              key={item === 'nearest' ? 'nearest' : item || 'all'}
+              key={item === 'nearest' ? 'nearest' : item}
               style={[
                 styles.categoryChip,
                 {
                   backgroundColor: isSelected
-                    ? (item === null ? theme.colors.primary : item === 'nearest' ? theme.colors.primary : categoryColor)
+                    ? (item === 'nearest' ? theme.colors.primary : categoryColor)
                     : theme.colors.surface,
                   borderColor: theme.colors.border,
                 },

@@ -72,8 +72,7 @@ const MainTabsNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ticket" size={size} color={color} />
           ),
-          headerShown: true,
-          headerTitle: 'Tours',
+          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -83,8 +82,7 @@ const MainTabsNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="bed" size={size} color={color} />
           ),
-          headerShown: true,
-          headerTitle: 'Hotels',
+          headerShown: false,
         }}
       />
       <Tab.Screen
