@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
+  Image,
 } from 'react-native';
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useTheme } from '../../../shared/theme';
@@ -16,6 +17,7 @@ import { categoryIcons, categoryLabels } from '../../../shared/constants/categor
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getImageSource } from '../../../shared/utils/imageHelper';
 
 interface MapScreenProps {
   navigation: any;
@@ -106,6 +108,15 @@ const PlaceCallout = React.memo<{
             />
           </View>
         </View>
+        {place.images && place.images.length > 0 && (
+          <View style={styles.calloutImageContainer}>
+            <Image
+              source={getImageSource(place.images[0])}
+              style={styles.calloutImage}
+              resizeMode="cover"
+            />
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -532,6 +543,17 @@ const styles = StyleSheet.create({
   calloutArrow: {
     marginLeft: 'auto',
   },
+  calloutImageContainer: {
+    width: '100%',
+    height: 150,
+    marginTop: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  calloutImage: {
+    width: '100%',
+    height: '100%',
+  },
   overlay: {
     position: 'absolute',
     top: 0,
@@ -548,7 +570,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'transparent',
   },
   popupContainer: {
     width: Dimensions.get('window').width * 0.85,
