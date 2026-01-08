@@ -6,6 +6,39 @@ import { Tour } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
 import { getImageSource } from '../utils/imageHelper';
 
+const getTourCategoryColor = (category: string | undefined, isDark: boolean): string => {
+  if (!category) return isDark ? '#42A5F5' : '#1E88E5';
+  
+  const colors = isDark ? {
+    sightseeing: '#42A5F5',
+    walking: '#BA68C8',
+    cruise: '#42A5F5',
+    food: '#FFB74D',
+    beer: '#FFB74D',
+    dayTrip: '#81C784',
+    segway: '#EF5350',
+  } : {
+    sightseeing: '#2196F3',
+    walking: '#9C27B0',
+    cruise: '#2196F3',
+    food: '#FF9800',
+    beer: '#FF9800',
+    dayTrip: '#4CAF50',
+    segway: '#F44336',
+  };
+
+  const categoryLower = category.toLowerCase();
+  if (categoryLower.includes('sightseeing')) return colors.sightseeing;
+  if (categoryLower.includes('walking')) return colors.walking;
+  if (categoryLower.includes('cruise')) return colors.cruise;
+  if (categoryLower.includes('food')) return colors.food;
+  if (categoryLower.includes('beer')) return colors.beer;
+  if (categoryLower.includes('day trip')) return colors.dayTrip;
+  if (categoryLower.includes('segway')) return colors.segway;
+  
+  return isDark ? '#42A5F5' : '#1E88E5';
+};
+
 interface TourCardProps {
   tour: Tour;
   onPress: () => void;
@@ -13,6 +46,7 @@ interface TourCardProps {
 
 export const TourCard: React.FC<TourCardProps> = ({ tour, onPress }) => {
   const theme = useTheme();
+  const categoryColor = getTourCategoryColor(tour.category, theme.isDark);
 
   return (
     <Card onPress={onPress} style={styles.card}>
@@ -38,6 +72,18 @@ export const TourCard: React.FC<TourCardProps> = ({ tour, onPress }) => {
             ]}
           >
             <Ionicons name="camera-outline" size={32} color={theme.colors.textTertiary} />
+          </View>
+        )}
+        {tour.category && (
+          <View
+            style={[
+              styles.categoryBadge,
+              { backgroundColor: categoryColor },
+            ]}
+          >
+            <Text style={styles.categoryText}>
+              {tour.category}
+            </Text>
           </View>
         )}
         {tour.rating && (
@@ -129,6 +175,19 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  categoryBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  categoryText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
   ratingBadge: {
     position: 'absolute',
