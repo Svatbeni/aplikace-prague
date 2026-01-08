@@ -19,6 +19,7 @@ import { MapScreen } from '../features/map/screens/MapScreen';
 import { ItinerariesListScreen } from '../features/itineraries/screens/ItinerariesListScreen';
 import { MoreScreen } from '../features/more/screens/MoreScreen';
 import { PracticalTipsScreen } from '../features/practical-tips/screens/PracticalTipsScreen';
+import { WeatherScreen } from '../features/weather/screens/WeatherScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabsParamList>();
@@ -106,6 +107,17 @@ const MainTabsNavigator = () => {
         }}
       />
       <Tab.Screen
+        name="Weather"
+        component={WeatherScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="partly-sunny" size={size} color={color} />
+          ),
+          headerShown: true,
+          headerTitle: 'Weather',
+        }}
+      />
+      <Tab.Screen
         name="More"
         component={MoreScreen}
         options={{
@@ -159,6 +171,15 @@ export const AppNavigator = () => {
           options={{
             headerShown: true,
             headerTitle: 'Practical Tips',
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen
+          name="Weather"
+          component={WeatherScreen}
+          options={{
+            headerShown: true,
+            headerTitle: 'Weather',
             presentation: 'card',
           }}
         />

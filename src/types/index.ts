@@ -213,6 +213,7 @@ export type RootStackParamList = {
   TourDetail: { tourId: string };
   HotelDetail: { hotelId: string };
   PracticalTips: undefined;
+  Weather: undefined;
 };
 
 export type MainTabsParamList = {
@@ -223,5 +224,6 @@ export type MainTabsParamList = {
   Map: undefined;
   Itineraries: undefined;
   More: undefined;
+  Weather: undefined;
 };
 
