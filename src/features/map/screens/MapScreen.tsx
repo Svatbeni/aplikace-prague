@@ -315,7 +315,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
               style={styles.closeButton}
               onPress={() => setSelectedPlace(null)}
             >
-              <Ionicons name="close" size={24} color={theme.colors.text} />
+              <Ionicons name="close" size={24} color="#333333" />
             </TouchableOpacity>
           </View>
         </View>
