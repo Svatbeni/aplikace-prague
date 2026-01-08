@@ -1,6 +1,7 @@
 import { PlaceRepository } from '../repositories/PlaceRepository';
 import { TourRepository } from '../repositories/TourRepository';
-import { Place, PlaceCategory, Tour } from '../../types';
+import { HotelRepository } from '../repositories/HotelRepository';
+import { Place, PlaceCategory, Tour, Hotel } from '../../types';
 
 const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
   {
@@ -185,6 +186,9 @@ export const seedDatabase = async (): Promise<void> => {
 
   // Seed tours
   await seedTours();
+
+  // Seed hotels
+  await seedHotels();
 };
 
 const sampleTours: Omit<Tour, 'createdAt' | 'updatedAt'>[] = [
@@ -359,6 +363,171 @@ export const seedTours = async (): Promise<void> => {
       createdAt: now,
       updatedAt: now,
     });
+  }
+};
+
+const sampleHotels: Omit<Hotel, 'createdAt' | 'updatedAt'>[] = [
+  {
+    id: 'hotel-1',
+    name: 'Metropolitan Old Town',
+    area: 'Old Town',
+    description: 'Elegant hotel in the heart of Old Town, just steps away from major landmarks. Features modern rooms with historic charm, rooftop terrace with city views, and excellent location for sightseeing.',
+    priceRange: '€100-150',
+    affiliateLink: 'https://www.booking.com/hotel/cz/rubicon-old-town.en.html?aid=1709572',
+    rating: 4.5,
+    features: ['Rooftop terrace', 'City center location', 'Historic building', 'Free WiFi'],
+  },
+  {
+    id: 'hotel-2',
+    name: 'River View Residence by Charles Bridge',
+    area: 'Lesser Town',
+    description: 'Beautiful apartment hotel with stunning views of Charles Bridge and Vltava River. Perfect for couples seeking a romantic stay with river views and easy access to Prague Castle.',
+    priceRange: '€120-180',
+    affiliateLink: 'https://www.booking.com/hotel/cz/river-view-residence-by-charles-bridge.en.html?aid=1709572',
+    rating: 4.7,
+    features: ['River view', 'Charles Bridge views', 'Apartment style', 'Kitchen facilities'],
+  },
+  {
+    id: 'hotel-3',
+    name: 'Dancing House Hotel',
+    area: 'New Town',
+    description: 'Iconic modern hotel in the famous Dancing House building. Unique architecture, contemporary design, and excellent views of the river and city. Perfect for architecture enthusiasts.',
+    priceRange: '€150-250',
+    affiliateLink: 'https://www.booking.com/hotel/cz/dancing-house.en.html?aid=1709572',
+    rating: 4.6,
+    features: ['Iconic architecture', 'Rooftop bar', 'Modern design', 'River views'],
+  },
+  {
+    id: 'hotel-4',
+    name: 'Pension Akát',
+    area: 'Žižkov',
+    description: 'Budget-friendly pension in the vibrant Žižkov district. Clean, comfortable rooms, friendly staff, and great value for money. Close to nightlife and local restaurants.',
+    priceRange: '€40-70',
+    affiliateLink: 'https://www.booking.com/hotel/cz/pension-aka-t.en.html?aid=1709572',
+    rating: 4.2,
+    features: ['Budget friendly', 'Local area', 'Good value', 'Public transport nearby'],
+  },
+  {
+    id: 'hotel-5',
+    name: 'Czech Inn',
+    area: 'Žižkov',
+    description: 'Modern hostel-hotel hybrid offering both private rooms and dormitories. Great for budget travelers and backpackers. Located in the lively Žižkov neighborhood with excellent nightlife.',
+    priceRange: '€30-60',
+    affiliateLink: 'https://www.booking.com/hotel/cz/czech-inn.en.html?aid=1709572',
+    rating: 4.3,
+    features: ['Budget option', 'Hostel & hotel', 'Social atmosphere', 'Nightlife nearby'],
+  },
+  {
+    id: 'hotel-6',
+    name: 'Wenceslas Square Hotel',
+    area: 'New Town',
+    description: 'Hotel with rooftop terrace overlooking Wenceslas Square. Central location, modern rooms, and excellent views of the famous square. Great for first-time visitors.',
+    priceRange: '€80-130',
+    affiliateLink: 'https://www.booking.com/hotel/cz/wenceslas-square.en.html?aid=1709572',
+    rating: 4.4,
+    features: ['Rooftop terrace', 'Wenceslas Square views', 'Central location', 'Shopping nearby'],
+  },
+  {
+    id: 'hotel-7',
+    name: 'Hotel Orion',
+    area: 'Vinohrady',
+    description: 'Charming hotel in the peaceful Vinohrady district, surrounded by parks and cafés. Perfect for longer stays, families, and those seeking a relaxed atmosphere away from tourist crowds.',
+    priceRange: '€70-110',
+    affiliateLink: 'https://www.booking.com/hotel/cz/orion-prague-2.en.html?aid=1709572',
+    rating: 4.5,
+    features: ['Parks nearby', 'Café culture', 'Quiet area', 'Family friendly'],
+  },
+  {
+    id: 'hotel-8',
+    name: 'Anna Hotel',
+    area: 'Vinohrady',
+    description: 'Boutique hotel in Vinohrady with elegant design and personalized service. Close to Riegrovy Sady park, excellent cafés, and local restaurants. Ideal for a relaxed stay.',
+    priceRange: '€90-140',
+    affiliateLink: 'https://www.booking.com/hotel/cz/anna.en.html?aid=1709572',
+    rating: 4.6,
+    features: ['Boutique style', 'Parks nearby', 'Local cafés', 'Personalized service'],
+  },
+  {
+    id: 'hotel-9',
+    name: 'Libero Residence',
+    area: 'Vinohrady',
+    description: 'Apartment hotel in the green Vinohrady district. Spacious apartments with kitchen facilities, perfect for families and longer stays. Surrounded by parks and excellent dining options.',
+    priceRange: '€100-160',
+    affiliateLink: 'https://www.booking.com/hotel/cz/pension44praha.en.html?aid=1709572',
+    rating: 4.5,
+    features: ['Apartment style', 'Kitchen facilities', 'Family friendly', 'Parks nearby'],
+  },
+  {
+    id: 'hotel-10',
+    name: 'Grand Hotel Bohemia',
+    area: 'Old Town',
+    description: 'Luxury 5-star hotel in the heart of Old Town. Elegant rooms, fine dining restaurant, spa facilities, and impeccable service. Perfect for a luxurious stay in Prague.',
+    priceRange: '€200-350',
+    affiliateLink: 'https://www.booking.com/hotel/cz/grandhotelbohemia.en.html?aid=1709572',
+    rating: 4.8,
+    features: ['5-star luxury', 'Spa facilities', 'Fine dining', 'Historic building', 'Premium service'],
+  },
+  {
+    id: 'hotel-11',
+    name: 'Alchymist Grand Hotel & Spa',
+    area: 'Lesser Town',
+    description: 'Luxurious hotel in Lesser Town with baroque architecture and spa facilities. Romantic atmosphere, elegant rooms, and excellent location near Prague Castle. Perfect for couples.',
+    priceRange: '€180-300',
+    affiliateLink: 'https://www.booking.com/hotel/cz/reshotelalchymistprague.en.html?aid=1709572',
+    rating: 4.7,
+    features: ['Luxury spa', 'Baroque architecture', 'Romantic', 'Prague Castle nearby', 'Fine dining'],
+  },
+  {
+    id: 'hotel-12',
+    name: 'KINGS COURT',
+    area: 'Old Town',
+    description: 'Premium hotel in Old Town with elegant design and excellent service. Central location, spacious rooms, and attention to detail. Perfect for discerning travelers.',
+    priceRange: '€150-280',
+    affiliateLink: 'https://booking.stay22.com/czechtheworld/QiazfhbDc-',
+    rating: 4.6,
+    features: ['Premium service', 'Central location', 'Elegant design', 'Spacious rooms'],
+  },
+];
+
+export const seedHotels = async (): Promise<void> => {
+  const repo = new HotelRepository();
+  const existing = await repo.getAll();
+  const now = new Date();
+
+  if (existing.length > 0) {
+    // Update existing hotels
+    for (const existingHotel of existing) {
+      const sampleHotel = sampleHotels.find((h) => h.id === existingHotel.id);
+      if (sampleHotel) {
+        await repo.update({
+          ...sampleHotel,
+          createdAt: existingHotel.createdAt || now,
+          updatedAt: now,
+        } as Hotel & { createdAt: Date; updatedAt: Date });
+      }
+    }
+
+    // Insert any missing hotels
+    for (const sampleHotel of sampleHotels) {
+      const exists = existing.find((h) => h.id === sampleHotel.id);
+      if (!exists) {
+        await repo.insert({
+          ...sampleHotel,
+          createdAt: now,
+          updatedAt: now,
+        } as Hotel & { createdAt: Date; updatedAt: Date });
+      }
+    }
+    return;
+  }
+
+  // Insert sample hotels if database is empty
+  for (const hotel of sampleHotels) {
+    await repo.insert({
+      ...hotel,
+      createdAt: now,
+      updatedAt: now,
+    } as Hotel & { createdAt: Date; updatedAt: Date });
   }
 };
 
