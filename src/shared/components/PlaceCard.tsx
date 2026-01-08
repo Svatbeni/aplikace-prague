@@ -6,6 +6,7 @@ import { Place } from '../../types';
 import { categoryLabels } from '../constants/categories';
 import { getCategoryColor } from '../theme/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { getImageSource } from '../utils/imageHelper';
 
 interface PlaceCardProps {
   place: Place;
@@ -21,9 +22,12 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onPress }) => {
       <View style={styles.imageContainer}>
         {place.images && place.images.length > 0 ? (
           <Image
-            source={{ uri: place.images[0] }}
+            source={getImageSource(place.images[0])}
             style={styles.image}
             resizeMode="cover"
+            onError={(error) => {
+              console.error('Image load error:', error.nativeEvent.error, 'for image:', place.images[0]);
+            }}
           />
         ) : (
           <View

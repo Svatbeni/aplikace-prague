@@ -104,6 +104,35 @@ export class PlaceRepository {
     );
   }
 
+  async update(place: Place): Promise<void> {
+    const db = getDatabase();
+    await db.runAsync(
+      `UPDATE places SET
+        name = ?, short_description = ?, description = ?, practical_tips = ?,
+        category = ?, latitude = ?, longitude = ?, opening_hours = ?, images = ?,
+        address = ?, estimated_visit_duration = ?, price_range = ?, is_premium = ?,
+        updated_at = ?
+      WHERE id = ?`,
+      [
+        place.name,
+        place.shortDescription,
+        place.description,
+        place.practicalTips,
+        place.category,
+        place.latitude,
+        place.longitude,
+        place.openingHours ? JSON.stringify(place.openingHours) : null,
+        JSON.stringify(place.images),
+        place.address || null,
+        place.estimatedVisitDuration || null,
+        place.priceRange || null,
+        place.isPremium ? 1 : 0,
+        place.updatedAt.toISOString(),
+        place.id,
+      ]
+    );
+  }
+
   private mapRowToPlace(row: {
     id: string;
     name: string;

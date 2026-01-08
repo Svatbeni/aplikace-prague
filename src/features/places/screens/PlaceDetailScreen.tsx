@@ -17,6 +17,7 @@ import { getCategoryColor } from '../../../shared/theme/colors';
 import { useFavoritesStore } from '../../../shared/stores/favoritesStore';
 import { FavoriteType } from '../../../types';
 import { Ionicons } from '@expo/vector-icons';
+import { getImageSource } from '../../../shared/utils/imageHelper';
 
 interface PlaceDetailScreenProps {
   route: { params: { placeId: string } };
@@ -88,9 +89,12 @@ export const PlaceDetailScreen: React.FC<PlaceDetailScreenProps> = ({
       <View style={styles.imageContainer}>
         {place.images && place.images.length > 0 ? (
           <Image
-            source={{ uri: place.images[0] }}
+            source={getImageSource(place.images[0])}
             style={styles.image}
             resizeMode="cover"
+            onError={(error) => {
+              console.error('Image load error:', error.nativeEvent.error, 'for image:', place.images[0]);
+            }}
           />
         ) : (
           <View

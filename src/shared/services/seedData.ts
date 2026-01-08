@@ -13,7 +13,7 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
     category: PlaceCategory.SIGHTSEEING,
     latitude: 50.0865,
     longitude: 14.4110,
-    images: [],
+    images: ['place-1.jpg'],
     address: 'Karlův most, 110 00 Praha 1',
     estimatedVisitDuration: 30,
     priceRange: 'free',
@@ -30,7 +30,7 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
     category: PlaceCategory.SIGHTSEEING,
     latitude: 50.0904,
     longitude: 14.4004,
-    images: [],
+    images: ['place-2.jpg'],
     address: 'Pražský hrad, 119 08 Praha 1',
     estimatedVisitDuration: 180,
     priceRange: 'medium',
@@ -47,7 +47,7 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
     category: PlaceCategory.SIGHTSEEING,
     latitude: 50.0875,
     longitude: 14.4214,
-    images: [],
+    images: ['place-3.jpg'],
     address: 'Staroměstské nám., 110 00 Praha 1',
     estimatedVisitDuration: 60,
     priceRange: 'free',
@@ -64,7 +64,7 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
     category: PlaceCategory.VIEWPOINTS,
     latitude: 50.0833,
     longitude: 14.3958,
-    images: [],
+    images: ['place-4.jpg'],
     address: 'Petřínské sady, 118 00 Praha 1',
     estimatedVisitDuration: 90,
     priceRange: 'low',
@@ -81,7 +81,7 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
     category: PlaceCategory.HIDDEN_GEMS,
     latitude: 50.0644,
     longitude: 14.4189,
-    images: [],
+    images: ['place-5.jpg'],
     address: 'V Pevnosti 159/5b, 128 00 Praha 2',
     estimatedVisitDuration: 90,
     priceRange: 'free',
@@ -98,7 +98,7 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
     category: PlaceCategory.HIDDEN_GEMS,
     latitude: 50.0857,
     longitude: 14.4075,
-    images: [],
+    images: ['place-6.jpg'],
     address: 'Velkopřevorské náměstí, 100 00 Praha 1',
     estimatedVisitDuration: 15,
     priceRange: 'free',
@@ -115,7 +115,7 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
     category: PlaceCategory.FOOD,
     latitude: 50.0751,
     longitude: 14.4189,
-    images: [],
+    images: ['place-7.jpg'],
     address: 'Křemencova 11, 110 00 Praha 1',
     estimatedVisitDuration: 90,
     priceRange: 'medium',
@@ -132,7 +132,7 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
     category: PlaceCategory.NATURE,
     latitude: 50.1083,
     longitude: 14.4317,
-    images: [],
+    images: ['place-8.jpg'],
     address: 'Královská obora, 170 00 Praha 7',
     estimatedVisitDuration: 60,
     priceRange: 'free',
@@ -143,15 +143,49 @@ const samplePlaces: Omit<Place, 'createdAt' | 'updatedAt'>[] = [
 export const seedDatabase = async (): Promise<void> => {
   const repo = new PlaceRepository();
 
-  // Check if data already exists
+  // Always update all places to ensure they have local images
   const existing = await repo.getAll();
+  const now = new Date();
+  
   if (existing.length > 0) {
-    console.log('Database already seeded');
+    console.log(`Found ${existing.length} existing places, updating with local images...`);
+    
+    let updatedCount = 0;
+    let insertedCount = 0;
+    
+    // Update ALL existing places with local images
+    for (const existingPlace of existing) {
+      const samplePlace = samplePlaces.find(p => p.id === existingPlace.id);
+      if (samplePlace) {
+        await repo.update({
+          ...samplePlace,
+          createdAt: existingPlace.createdAt,
+          updatedAt: now,
+        });
+        updatedCount++;
+        console.log(`Updated place ${samplePlace.id} (${samplePlace.name}) with image: ${samplePlace.images[0]}`);
+      }
+    }
+    
+    // Insert any missing places
+    for (const samplePlace of samplePlaces) {
+      const exists = existing.find(p => p.id === samplePlace.id);
+      if (!exists) {
+        await repo.insert({
+          ...samplePlace,
+          createdAt: now,
+          updatedAt: now,
+        });
+        insertedCount++;
+        console.log(`Inserted new place ${samplePlace.id} (${samplePlace.name}) with image: ${samplePlace.images[0]}`);
+      }
+    }
+    
+    console.log(`✓ Updated ${updatedCount} places, inserted ${insertedCount} new places with local images`);
     return;
   }
 
-  // Insert sample places
-  const now = new Date();
+  // Insert sample places if database is empty
   for (const place of samplePlaces) {
     await repo.insert({
       ...place,
